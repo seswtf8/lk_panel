@@ -1,0 +1,263 @@
+/* ═══════════════════════════════════════════════════════════════════════
+   LK PANEL ULTRA — Feature-specific styles
+   Base tokens/buttons/forms live in modern_theme.css.
+   This file adds helpers that are unique to specific tabs.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* ═══ Anti-zoom / touch safety ═════════════════════════════════════ */
+html, body {
+  touch-action: pan-y;
+  -webkit-user-select: none; -moz-user-select: none;
+  -ms-user-select: none; user-select: none;
+  -webkit-touch-callout: none;
+}
+* {
+  touch-action: pan-y;
+  -webkit-user-select: none; -moz-user-select: none;
+  -ms-user-select: none; user-select: none;
+  -webkit-touch-callout: none;
+}
+input, textarea, select, pre, .cfg-code, .hl-msg, .notif-text,
+.adv-inbound-json, .vd-code, .ech-preset-main code {
+  user-select: text !important;
+  -webkit-user-select: text !important;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+/* ═══ Keyframes for feature animations ═════════════════════════════ */
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes scaleIn {
+  from { transform: scale(.9); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+@keyframes slideUp {
+  from { transform: translateY(100%); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+@keyframes slideDown {
+  from { transform: translateY(-100%); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+@keyframes float {
+  0%,100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+@keyframes particle {
+  0% { transform: translateY(100vh) scale(0); opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+}
+@keyframes pulse {
+  0%,100% { opacity: 1; }
+  50% { opacity: .4; }
+}
+@keyframes copyFlash {
+  0% { background: var(--accent); }
+  100% { background: transparent; }
+}
+
+/* ═══ Inline login card image fallback ═════════════════════════════ */
+.login-card img { max-width: 96px; max-height: 96px; }
+
+/* ═══ Custom IP picker ═════════════════════════════════════════════ */
+.cu-custom-wrap { position: relative; }
+.cu-custom-btn { width: 100%; justify-content: space-between; }
+.cu-custom-menu {
+  position: absolute; top: calc(100% + 4px); left: 0; right: 0; z-index: 50;
+  background: var(--bg-2); border: 1px solid var(--line);
+  border-radius: 12px; overflow: hidden;
+  box-shadow: var(--sh-md); display: none;
+}
+.cu-custom-opt {
+  display: flex; width: 100%; align-items: center; gap: 8px;
+  padding: 10px 14px; background: none; border: none;
+  color: var(--text); font-size: 12px; font-weight: 600;
+  cursor: pointer; text-align: right;
+}
+.cu-custom-opt:hover { background: var(--accent-soft); color: var(--accent); }
+.cu-custom-opt.active { color: var(--accent); }
+.cu-custom-opt + .cu-custom-opt { border-top: 1px solid var(--line); }
+
+/* ═══ Inbound options (Node / Cloudflare / Railway choice) ═════════ */
+.ib-opts {
+  flex-basis: 100%; margin-top: 4px; padding: 10px 12px;
+  background: var(--bg-2); border: 1px solid var(--line);
+  border-radius: var(--radius); display: flex;
+  flex-direction: column; gap: 8px;
+}
+.ib-opts select {
+  width: 100%; padding: 9px 12px;
+  background: var(--bg-2); border: 1px solid var(--line);
+  border-radius: 10px; color: var(--text); font-size: 12px; outline: none;
+}
+.ib-opts select option { background: var(--bg-2); color: var(--text); }
+
+/* ═══ User action buttons (subtle in table rows) ═══════════════════ */
+.user-action-btns .btn {
+  background: var(--bg-2);
+  color: var(--text);
+  border: 1px solid var(--line);
+  box-shadow: none;
+}
+.user-action-btns .btn:hover {
+  background: var(--accent-soft);
+  color: var(--accent);
+  border-color: var(--line-accent);
+}
+
+/* ═══ Advanced settings box variations ═════════════════════════════ */
+.settings-box .panel-h { margin-bottom: var(--sp-3); }
+
+/* ═══ Node-only inbound modal ══════════════════════════════════════ */
+.node-only-hidden { display: none !important; }
+#mod-inbound.inbound-node-only .modal-c { max-width: 560px; }
+#mod-inbound.inbound-node-only .modal-t { margin-bottom: 12px; }
+#mod-inbound.inbound-node-only .node-select-wrap {
+  margin-top: 0; padding-top: 0; border-top: 0;
+}
+#mod-inbound.inbound-node-only .node-select-list {
+  max-height: 52vh; overflow: auto; padding-right: 2px;
+}
+#mod-inbound.inbound-node-only .modal-btns { margin-top: 14px; }
+
+/* ═══ Inbounds-tab: override flashy gradients ══════════════════════ */
+#tab-inbounds .btn,
+#tab-inbounds .btn-p,
+#tab-inbounds .btn-b,
+#tab-inbounds .btn-r,
+#tab-inbounds .btn-gr,
+#tab-inbounds .btn-glass,
+#mod-inbound .btn,
+#mod-inbound .btn-p,
+#mod-inbound .btn-b,
+#mod-inbound .btn-r,
+#mod-inbound .btn-gr,
+#mod-inbound .btn-glass {
+  background: var(--bg-2);
+  color: var(--text);
+  border: 1px solid var(--line);
+  box-shadow: none;
+  filter: none;
+  transform: none;
+}
+#tab-inbounds .btn:hover,
+#tab-inbounds .btn-p:hover,
+#tab-inbounds .btn-b:hover,
+#tab-inbounds .btn-r:hover,
+#tab-inbounds .btn-gr:hover,
+#tab-inbounds .btn-glass:hover,
+#mod-inbound .btn:hover,
+#mod-inbound .btn-p:hover,
+#mod-inbound .btn-b:hover,
+#mod-inbound .btn-r:hover,
+#mod-inbound .btn-gr:hover,
+#mod-inbound .btn-glass:hover {
+  background: var(--accent-soft);
+  color: var(--accent);
+  border-color: var(--line-accent);
+  box-shadow: none;
+  transform: none;
+  filter: none;
+}
+
+/* ═══ Speed-limit field extra hint spacing ═════════════════════════ */
+.speed-limit-field .px-hint { margin-top: 0; }
+
+/* ═══ Server-info row mobile compaction ════════════════════════════ */
+@media (max-width: 900px) {
+  #server-info-wrap .set-row {
+    gap: 8px; align-items: center; flex-wrap: wrap;
+  }
+  #server-info-wrap .set-row .btn-glass {
+    flex: 0 0 auto; width: auto;
+    min-width: 0; min-height: 32px; height: 32px;
+    padding: 5px 9px; font-size: 11px; line-height: 1.1;
+    border-radius: 9px; white-space: nowrap;
+  }
+  #server-info-wrap #api-key-display {
+    flex: 1 1 100%; min-width: 0; font-size: 10px;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+
+  /* TCP results mobile-friendly */
+  #scn-tcp-results { gap: 5px !important; max-height: 52vh !important; }
+  #scn-tcp-results .scn-result {
+    min-height: 38px; padding: 6px 8px !important;
+    gap: 6px !important; font-size: 11px !important;
+    overflow: hidden !important;
+  }
+  #scn-tcp-results .scn-copy-value {
+    display: block; min-width: 0; max-width: none;
+    min-height: 30px; height: 30px;
+    padding: 4px 6px !important; margin: 0;
+    border-radius: 7px; font-size: 11px;
+    line-height: 20px;
+    font-family: ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    -webkit-user-select: none; user-select: none;
+    touch-action: manipulation;
+  }
+  #scn-tcp-results .scn-dom-name {
+    flex: 1 1 auto; width: auto; text-align: left;
+    color: var(--text-2);
+  }
+  #scn-tcp-results .scn-result .scn-ip {
+    flex: 0 1 42%; width: auto; text-align: left;
+  }
+  #scn-tcp-results .scn-result .scn-ms {
+    flex: 0 0 auto; margin-left: auto;
+    font-size: 10px; white-space: nowrap;
+  }
+  #scn-tcp-results .scn-copy-value:active {
+    background: rgba(255,255,255,.06);
+    transform: none;
+  }
+}
+
+/* ═══ ECH picker backdrop ══════════════════════════════════════════ */
+#mod-ech-picker.modal {
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+/* ═══ QR / QR img dialog ═══════════════════════════════════════════ */
+#mod-qr .modal-c { text-align: center; }
+#mod-qr .cfg-code {
+  background: transparent; border: 0; padding: 0;
+}
+
+/* ═══ Sidebar & modal hardware acceleration ═══════════════════════ */
+.sidebar.open, .modal.show .modal-c {
+  will-change: transform;
+  backface-visibility: hidden;
+}
+
+/* ═══ Notification accordion — non-truncating title ═══════════════ */
+#notif-list .spd-acc-title {
+  font-weight: 700; white-space: normal;
+  overflow: visible; text-overflow: clip;
+}
+
+/* ═══ Scanner tab: forced grid collapse on mobile ══════════════════ */
+@media (max-width: 900px) {
+  .scn-tabs { flex-wrap: nowrap; }
+  .scn-tab { font-size: 11px; padding: 8px 4px; }
+  .px-tools { flex-wrap: wrap; }
+  .px-tools .btn { flex: 1 1 auto; }
+  .scn-cfg div[style*="display:flex"] {
+    flex-direction: column !important;
+    gap: 10px !important;
+  }
+  #scn-sni-input {
+    width: 100% !important;
+    min-height: 48px;
+    font-size: 16px !important;
+  }
+  .scn-cfg .btn {
+    width: 100% !important;
+    min-height: 48px;
+  }
+  .modal-c .f-r { flex-direction: column !important; }
+  .modal-c .f-g { min-width: 100% !important; }
+}

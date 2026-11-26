@@ -1,0 +1,60 @@
+/* ═══════════════════════════════════════════════════════════════════════
+   LK PANEL ULTRA — Micro utilities
+   ONLY overrides specific to components that need extra specificity.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* ═══ ECH picker specificity overrides ════════════════════════════ */
+#mod-ech-picker.modal {
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+}
+#mod-ech-picker .ech-picker-modal {
+  background: rgba(18,20,26,.84) !important;
+  border-color: rgba(255,255,255,.18) !important;
+  backdrop-filter: blur(24px) !important;
+  -webkit-backdrop-filter: blur(24px) !important;
+  box-shadow: 0 16px 48px rgba(0,0,0,.42) !important;
+}
+#mod-ech-picker .ech-preset-option {
+  background: rgba(255,255,255,.055);
+  border-color: rgba(255,255,255,.14);
+}
+#mod-ech-picker .ech-preset-option.selected {
+  background: rgba(255,255,255,.12);
+  border-color: rgba(255,255,255,.6);
+}
+[data-theme="light"] #mod-ech-picker .ech-picker-modal {
+  background: rgba(255,255,255,.84) !important;
+  border-color: rgba(0,0,0,.16) !important;
+  box-shadow: 0 16px 48px rgba(0,0,0,.14) !important;
+}
+[data-theme="light"] #mod-ech-picker .ech-preset-option {
+  background: rgba(0,0,0,.025);
+  border-color: rgba(0,0,0,.12);
+}
+[data-theme="light"] #mod-ech-picker .ech-preset-option.selected {
+  background: rgba(0,0,0,.07);
+  border-color: #000;
+}
+
+/* ═══ Proxy card: expanded state styling ═════════════════════════ */
+.px-card .px-body { display: block; }
+
+/* ═══ Modals z-index safety ══════════════════════════════════════ */
+.modal.show { z-index: 200; }
+
+/* ═══ Sidebar on mobile: ensure visible toggle ═══════════════════ */
+@media (max-width: 900px) {
+  .sidebar.open { z-index: 100; }
+  .sidebar-backdrop.show { z-index: 99; }
+}
+
+/* ═══ Make sure .hidden works everywhere ═════════════════════════ */
+.hidden { display: none !important; }
+
+/* ═══ Small helper: page-fit for long forms ═════════════════════ */
+@media (max-width: 400px) {
+  .login-card { padding: 28px 20px 24px; }
+  .login-title { font-size: 20px; letter-spacing: 3px; }
+  .topbar-greet { font-size: 12px; }
+}

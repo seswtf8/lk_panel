@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>Lk panel Login</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@500;700;900&display=swap" rel="stylesheet"/>
+
+<script src="/static/js/login-head.js"></script>
+
+<link rel="stylesheet" href="/static/css/login.css">
+</head>
+<body class="h-screen w-screen overflow-hidden flex items-center justify-center relative">
+
+<!-- نوار شناور بالا (بدون کلید release) -->
+<div class="badge-bar">
+    <span class="badge-item">★ 2026</span>
+    <span class="badge-item">LK</span>
+</div>
+
+<!-- بک‌گراند: مجسمه دایترد و هاله (در سمت چپ) -->
+<div class="hero-container">
+    <div class="hero-halo"></div>
+    <span class="hero-vertical-text">LK</span>
+    <img class="hero-statue" src="/static/img/hero.png" alt="White Statue Background">
+</div>
+
+<!-- باکس ورود (روی مجسمه و لایه z-10) -->
+<div class="glass-card rounded-3xl w-full max-w-md p-8 mx-4 flex flex-col gap-6 shadow-2xl z-10 relative">
+    <!-- Header -->
+    <div class="flex flex-col items-center gap-2 text-center">
+        <img src="/static/white-logo.svg" alt="Lk panel" onerror="this.style.display='none'" style="width:96px;height:96px;margin-bottom:2px">
+        <h1 class="text-2xl font-bold tracking-wider text-white">LK PANEL</h1>
+        <p class="text-xs text-on-surface-variant font-medium">High Performance Panel</p>
+    </div>
+
+    <!-- Error -->
+    <div class="error-msg" id="error-msg">
+        <span class="material-symbols-outlined" style="font-size:18px;">error</span>
+        <span id="error-text"></span>
+    </div>
+
+    <!-- Form -->
+    <form class="flex flex-col gap-4" id="login-form">
+        <div class="flex flex-col gap-2">
+            <label class="font-code-label text-xs text-on-surface-variant tracking-wider" for="password">PASSWORD</label>
+            <div class="relative">
+                <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant" style="font-size: 20px;">lock</span>
+                <input class="input-glass password-mask-input w-full rounded-2xl py-3 pl-12 pr-4 text-sm text-white placeholder:text-gray-500 font-sans" id="password" placeholder="Enter password" type="password" autofocus required/>
+                <span class="password-mask" id="password-mask" aria-hidden="true"></span>
+            </div>
+        </div>
+        
+        <button class="mt-2 btn-submit font-bold py-3.5 rounded-2xl flex items-center justify-center gap-2 text-sm" id="loginBtn" type="submit">
+            <span id="btn-text" class="flex items-center gap-2">Sign In <span class="material-symbols-outlined" style="font-size: 18px;">arrow_forward</span></span>
+            <span id="btn-spinner" class="hidden"><span class="material-symbols-outlined animate-spin" style="font-size: 18px;">progress_activity</span></span>
+        </button>
+    </form>
+</div>
+
+<!-- لاجیک احراز هویت -->
+<script src="/static/js/login.js"></script>
+
+<!-- جلوگیری از زوم یا کپی ناخواسته -->
+
+</body>
+</html>

@@ -1,0 +1,1188 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl" data-theme="dark" data-accent="red">
+<head>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>Lk panel Ultra</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<!-- Persian fonts: Vazirmatn (modern) + Estedad (display) -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css">
+<link href="https://fonts.googleapis.com/css2?family=Estedad:wght@400;500;700;900&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/topojson-client@3/dist/topojson-client.min.js"></script>
+
+<link rel="stylesheet" href="/static/css/style.css">
+<link rel="stylesheet" href="/static/css/modern_theme.css">
+<link rel="stylesheet" href="/static/css/ui.css">
+</head>
+<body>
+
+<!-- LOGIN -->
+<div class="login-wrap" id="login-wrap" style="display:none">
+  <div class="login-card">
+    <div class="login-header">
+      <img src="/static/white-logo.svg" alt="Lk" onerror="this.style.display='none'" style="width:96px;height:96px;margin-bottom:6px">
+      <div class="login-title">LK PANEL</div>
+      <div class="login-subtitle">High Performance Panel</div>
+    </div>
+    <div class="error-msg" id="login-err">
+      <span class="material-symbols-outlined" style="font-size:18px;">error</span>
+      <span id="login-err-text"></span>
+    </div>
+    <form class="login-form" id="login-form">
+      <div class="input-group">
+        <label for="login-user">USERNAME</label>
+        <div class="input-wrapper">
+          <span class="material-symbols-outlined">person</span>
+          <input class="input-glass" id="login-user" type="text" placeholder="Enter username" value="admin" autocomplete="username"/>
+        </div>
+      </div>
+      <div class="input-group">
+        <label for="login-pw">PASSWORD</label>
+        <div class="input-wrapper">
+          <span class="material-symbols-outlined">lock</span>
+          <input class="input-glass" id="login-pw" type="password" placeholder="Enter password" value="admin" autocomplete="current-password"/>
+        </div>
+      </div>
+      <button class="login-btn" id="login-btn" type="submit">
+        <span class="btn-text" id="login-btn-text">Sign In <span class="material-symbols-outlined" style="font-size:20px;">arrow_forward</span></span>
+        <span class="btn-spinner" id="login-btn-spinner"><span class="material-symbols-outlined" style="font-size:20px;">progress_activity</span></span>
+      </button>
+    </form>
+  </div>
+</div>
+
+<!-- APP -->
+<div class="app-wrap" id="app-wrap">
+  <div class="sidebar-backdrop" id="sidebar-backdrop" onclick="closeSidebar()"></div>
+  <aside class="sidebar" id="sidebar">
+    <div class="sb-brand">
+      <img src="/static/white-logo.svg" alt="Lk" onerror="this.style.display='none'" style="width:56px;height:56px;flex-shrink:0">
+      <div>
+        <div class="sb-brand-t"><span>W</span>HITE</div>
+        <div class="sb-brand-s">PANEL ULTRA</div>
+      </div>
+    </div>
+    <nav class="sb-nav">
+      <div class="nav-item active" onclick="switchTab('dashboard',this)">
+        <span class="nav-ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg></span>
+        <span data-i18n="dash">داشبورد</span>
+      </div>
+      <div class="nav-accordion" id="main-nav-accordion">
+        <button class="nav-accordion-head" type="button" onclick="toggleNavAccordion()" aria-expanded="true">
+          <span class="nav-accordion-title"><span class="material-symbols-outlined nav-accordion-ic">apps</span><span data-i18n="navGroup">مدیریت</span></span>
+          <span class="material-symbols-outlined nav-accordion-arrow">expand_more</span>
+        </button>
+        <div class="nav-accordion-body" id="main-nav-accordion-body">
+          <div class="nav-item" onclick="switchTab('users',this)">
+            <span class="nav-ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2m8-10a4 4 0 100-8 4 4 0 000 8zm13 10v-2a4 4 0 00-3-3.87m-4-12a4 4 0 010 7.75"/></svg></span>
+            <span data-i18n="users">کاربران</span>
+          </div>
+          <div class="nav-item" onclick="switchTab('inbounds',this)">
+            <span class="nav-ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="8" rx="2"/><rect x="2" y="14" width="20" height="8" rx="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg></span>
+            <span data-i18n="inbounds">اینباندها</span>
+          </div>
+          <div class="nav-item" onclick="switchTab('scanner',this)">
+            <span class="nav-ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/><path d="M11 8v3l2 2"/></svg></span>
+            <span data-i18n="scanner">اسکنر IP</span>
+          </div>
+          <div class="nav-item" onclick="switchTab('worker',this)">
+            <span class="nav-ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></span>
+            <span data-i18n="worker">Worker</span>
+          </div>
+          <div class="nav-item" onclick="switchTab('nodes',this)">
+            <span class="nav-ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="3"/><circle cx="5" cy="19" r="3"/><circle cx="19" cy="19" r="3"/><line x1="12" y1="8" x2="5" y2="16"/><line x1="12" y1="8" x2="19" y2="16"/></svg></span>
+            <span data-i18n="nodes">نودها</span>
+          </div>
+          <div class="nav-item" onclick="switchTab('bot',this)">
+            <span class="nav-ic"><span class="material-symbols-outlined" style="font-size:18px">smart_toy</span></span>
+            <span data-i18n="bot">Bot</span>
+          </div>
+          <div class="nav-item" onclick="switchTab('xray',this)">
+            <span class="nav-ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg></span>
+            <span data-i18n="xrayCore">Xray Core</span>
+          </div>
+          <div class="nav-item" onclick="switchTab('settings',this)">
+            <span class="nav-ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg></span>
+            <span data-i18n="settings">تنظیمات</span>
+          </div>
+          <div class="nav-item" onclick="switchTab('proxy',this)">
+            <span class="nav-ic"><span class="material-symbols-outlined" style="font-size:18px">travel_explore</span></span>
+            <span data-i18n="proxy.nav">پروکسی</span>
+          </div>
+          <div class="nav-item" id="nav-tm" onclick="switchTab('tm',this)">
+            <span class="nav-ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="5" cy="6" r="2.4"/><circle cx="12" cy="12" r="2.4"/><circle cx="19" cy="18" r="2.4"/><line x1="7" y1="7.6" x2="10" y2="10.4"/><line x1="14" y1="13.6" x2="17" y2="16.4"/></svg></span>
+            <span data-i18n="tm.nav">Tunnel Management</span>
+            <span class="nav-short">TM</span>
+          </div>
+        </div>
+      </div>
+      <div class="nav-item" onclick="switchTab('autoconfig',this)">
+        <span class="nav-ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4m0 12v4M2 12h4m12 0h4"/><circle cx="12" cy="12" r="4"/></svg></span>
+        <span data-i18n="autoconfig">Auto Config</span>
+      </div>
+      <div class="nav-item" id="nav-tunnel" onclick="switchTab('tunnel',this)">
+        <span class="nav-ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20V10a8 8 0 0116 0v10"/><line x1="2" y1="20" x2="22" y2="20"/><line x1="9" y1="20" x2="9" y2="13"/><line x1="15" y1="20" x2="15" y2="13"/></svg></span>
+        <span data-i18n="tunnel">Tunnel</span>
+      </div>
+      <div class="nav-accordion" id="system-nav-accordion">
+        <button class="nav-accordion-head" type="button" onclick="toggleSystemNavAccordion()" aria-expanded="false">
+          <span class="nav-accordion-title"><span class="material-symbols-outlined nav-accordion-ic">settings</span><span data-i18n="systemGroup">سیستم</span></span>
+          <span class="material-symbols-outlined nav-accordion-arrow">expand_more</span>
+        </button>
+        <div class="nav-accordion-body" id="system-nav-accordion-body">
+          <div class="nav-item" onclick="switchTab('help',this)">
+            <span class="nav-ic"><span class="material-symbols-outlined" style="font-size:18px">help</span></span>
+            <span data-i18n="tab.help">راهنما</span>
+          </div>
+          <div class="nav-item" id="nav-notif" onclick="switchTab('notif',this)">
+            <span class="nav-ic"><span class="material-symbols-outlined" style="font-size:18px">campaign</span></span>
+            <span data-i18n="notif.nav">اعلان‌ها</span>
+          </div>
+          <div class="nav-item" onclick="switchTab('advanced',this)">
+            <span class="nav-ic"><span class="material-symbols-outlined" style="font-size:18px">tune</span></span>
+            <span data-i18n="tab.advanced">پیشرفته</span>
+          </div>
+          <div class="nav-item" id="nav-vercel-domain" onclick="switchTab('vercel-domain',this)">
+            <span class="nav-ic"><span class="material-symbols-outlined" style="font-size:18px">language</span></span>
+            <span data-i18n="vercelDomain.nav">Vercel Domain</span>
+          </div>
+        </div>
+      </div>
+      <div class="nav-item" onclick="switchTab('suggest',this)">
+        <span class="nav-ic"><span class="material-symbols-outlined" style="font-size:18px">lightbulb</span></span>
+        <span>Suggest</span>
+      </div>
+      <div class="nav-item" onclick="switchTab('contact',this)">
+        <span class="nav-ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg></span>
+        <span data-i18n="contact">Contact Me</span>
+      </div>
+      <div class="nav-item" onclick="doLogout()" style="color:var(--red)!important">
+        <span class="nav-ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4m7 14l5-5-5-5m5 5H9"/></svg></span>
+        <span data-i18n="logout">خروج</span>
+      </div>
+    </nav>
+    <div class="sb-foot"><span class="dot"></span> Lk panel Ultra</div>
+  </aside>
+
+  <div class="main-area">
+    <div class="topbar">
+      <div class="topbar-greet" id="grt"></div>
+      <div class="topbar-r">
+        <button class="lang-btn" id="theme-btn" onclick="toggleThemeMode()" title="حالت روشن/تاریک / Dark-Light mode"><span id="theme-ic" class="material-symbols-outlined" style="font-size:18px">light_mode</span><span id="theme-label">روشن</span></button>
+        <button class="lang-btn" id="lang-btn" onclick="toggleLang()" title="تغییر زبان / Change language"><span id="lang-flag" class="lang-flag"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></span><span id="lang-label">EN</span></button>
+        <button class="btn btn-sm btn-g sidebar-tog" onclick="toggleSidebar()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+      </div>
+    </div>
+    <div class="content">
+
+      <!-- DASHBOARD -->
+      <div class="tab-content" id="tab-dashboard">
+        <div class="panel"><div class="panel-h"><span class="glow" data-i18n="tab.dash">داشبورد</span></div><div id="dashboard-content"><div class="empty" data-i18n="loading">در حال بارگذاری...</div></div></div>
+      </div>
+
+      <!-- USERS -->
+      <div class="tab-content hidden" id="tab-users">
+        <div class="panel">
+          <div class="panel-h" style="justify-content:space-between">
+            <span class="glow" data-i18n="tab.users">مدیریت کاربران</span>
+            <button class="btn btn-p" onclick="openCreateUser()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              <span data-i18n="newUser">کاربر جدید</span>
+            </button>
+          </div>
+          <div id="users-list"><div class="empty" data-i18n="loading">در حال بارگذاری...</div></div>
+        </div>
+      </div>
+
+      <!-- INBOUNDS -->
+      <div class="tab-content hidden" id="tab-inbounds">
+        <div class="panel">
+          <div class="panel-h" style="justify-content:space-between">
+            <span class="glow" data-i18n="tab.inbounds">مدیریت اینباندها</span>
+            <button class="btn btn-p" onclick="openCreateInbound()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              <span data-i18n="newInbound">اینباند جدید</span>
+            </button>
+          </div>
+          <div class="px-hint">اینباند جدید ایجاد کنید یا اینباندهای موجود را ویرایش کنید. Config، Telegram Proxy پشتیبانی می‌شوند.</div>
+          <div id="inbounds-list"><div class="empty" data-i18n="loading">در حال بارگذاری...</div></div>
+        </div>
+      </div>
+
+      <!-- SCANNER (unchanged structure) -->
+      <div class="tab-content hidden" id="tab-scanner">
+        <div class="panel">
+          <div class="panel-h"><span class="glow" data-i18n="tab.scanner">اسکنر آی‌پی</span><span class="badge badge-g" style="margin-right:auto;animation:pulse 1.5s infinite"><span data-i18n="liveBadge">LIVE</span></span></div>
+          <div class="spd-acc" style="margin-top:10px">
+            <button type="button" class="spd-acc-head" onclick="spdToggleAcc('scn-cf',this)" aria-expanded="false"><span class="spd-acc-title"><strong data-i18n="cloudflareTitle">Cloudflare</strong></span><span class="material-symbols-outlined spd-acc-arrow">expand_more</span></button>
+            <div class="spd-acc-body" id="acc-scn-cf">
+              <div class="scn-pane active" id="scn-pane-cf">
+                <div class="scn-cfg">
+                  <div class="f-g"><label data-i18n="ipCount">تعداد IP</label><input type="number" id="scn-cf-count" value="30" min="1" max="100"></div>
+                  <div class="f-g"><label data-i18n="targetPort">پورت هدف</label><select id="scn-cf-port"><option value="443">443</option><option value="2053">2053</option><option value="8443">8443</option><option value="2083">2083</option></select></div>
+                  <div class="f-g"><label>Tween (ms)</label><input type="number" id="scn-cf-delay" value="200" min="50" max="2000" step="50"></div>
+                  <div class="f-g"><label>Timeout (s)</label><input type="number" id="scn-cf-timeout" value="1.0" min="0.3" max="5" step="0.1"></div>
+                  <button class="btn btn-p" onclick="scnRunCF()"><span data-i18n="startScan">شروع اسکن</span></button>
+                  <button class="btn btn-g" onclick="scnStop()"><span data-i18n="stop">توقف</span></button>
+                </div>
+                <div class="scn-hint px-hint" data-i18n="scnTip">اسکن زنده از رنج‌های Cloudflare. IPهای پاسخ‌دهنده مرتب و ۱۰ تای اول به صورت خودکار ذخیره می‌شوند.</div>
+                <div class="scn-stats">
+                  <div class="scn-chip"><b id="scn-cf-found">۰</b><span data-i18n="found">IP یافت شده</span></div>
+                  <div class="scn-chip"><b id="scn-cf-tried">۰</b><span data-i18n="tried">تست شده</span></div>
+                  <div class="scn-chip"><b id="scn-cf-best">--</b><span data-i18n="bestPing">بهترین پینگ</span></div>
+                  <div class="scn-chip"><b id="scn-cf-saved">۰/۱۰</b><span data-i18n="saved">ذخیره شده</span></div>
+                </div>
+                <div class="scn-progress"><div class="scn-bar" id="scn-cf-bar"></div></div>
+                <div class="scn-list" id="scn-cf-list"><div class="scn-empty" data-i18n="startPrompt">برای شروع اسکن، دکمه «شروع اسکن» را بزنید</div></div>
+                <div class="scn-saved">
+                  <div class="scn-saved-t"><span data-i18n="savedFirst10">ذخیره شده (اولین ۱۰ آی‌پی)</span> — <button class="btn btn-sm btn-g" onclick="scnClearSaved('cf')"><span data-i18n="clear">پاک کردن</span></button></div>
+                  <div class="scn-saved-tags" id="scn-cf-saved-tags"><span class="scn-empty" data-i18n="notSaved">هنوز ذخیره‌ای نیست</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="spd-acc" style="margin-top:10px">
+            <button type="button" class="spd-acc-head" onclick="spdToggleAcc('scn-railway',this)" aria-expanded="false"><span class="spd-acc-title"><strong data-i18n="railwayTitle">Railway</strong></span><span class="material-symbols-outlined spd-acc-arrow">expand_more</span></button>
+            <div class="spd-acc-body" id="acc-scn-railway">
+              <div class="scn-pane active" id="scn-pane-railway">
+                <div class="scn-cfg">
+                  <div class="f-g"><label data-i18n="ipCount">تعداد IP</label><input type="number" id="scn-rw-count" value="30" min="1" max="100"></div>
+                  <div class="f-g"><label data-i18n="targetPort">پورت هدف</label><select id="scn-rw-port"><option value="443">443</option><option value="8080">8080</option><option value="80">80</option></select></div>
+                  <div class="f-g"><label>Tween (ms)</label><input type="number" id="scn-rw-delay" value="200" min="50" max="2000" step="50"></div>
+                  <div class="f-g"><label>Timeout (s)</label><input type="number" id="scn-rw-timeout" value="1.0" min="0.3" max="5" step="0.1"></div>
+                  <button class="btn btn-p" onclick="scnRunRailway()"><span data-i18n="startScan">شروع اسکن</span></button>
+                  <button class="btn btn-g" onclick="scnStop()"><span data-i18n="stop">توقف</span></button>
+                </div>
+                <div class="scn-hint px-hint" data-i18n="scnRailwayTip">اسکن زنده از رنج‌های اعلام‌شده Railway (اروپا). IPهای پاسخ‌دهنده مرتب و ۱۰ تای اول به صورت خودکار ذخیره می‌شوند.</div>
+                <div class="scn-stats">
+                  <div class="scn-chip"><b id="scn-rw-found">۰</b><span data-i18n="found">IP یافت شده</span></div>
+                  <div class="scn-chip"><b id="scn-rw-tried">۰</b><span data-i18n="tried">تست شده</span></div>
+                  <div class="scn-chip"><b id="scn-rw-best">--</b><span data-i18n="bestPing">بهترین پینگ</span></div>
+                  <div class="scn-chip"><b id="scn-rw-saved">۰/۱۰</b><span data-i18n="saved">ذخیره شده</span></div>
+                </div>
+                <div class="scn-progress"><div class="scn-bar" id="scn-rw-bar"></div></div>
+                <div class="scn-list" id="scn-rw-list"><div class="scn-empty" data-i18n="startPrompt">برای شروع اسکن، دکمه «شروع اسکن» را بزنید</div></div>
+                <div class="scn-saved">
+                  <div class="scn-saved-t"><span data-i18n="savedFirst10">ذخیره شده (اولین ۱۰ آی‌پی)</span> — <button class="btn btn-sm btn-g" onclick="scnClearSaved('railway')"><span data-i18n="clear">پاک کردن</span></button></div>
+                  <div class="scn-saved-tags" id="scn-rw-saved-tags"><span class="scn-empty" data-i18n="notSaved">هنوز ذخیره‌ای نیست</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="spd-acc" style="margin-top:10px">
+            <button type="button" class="spd-acc-head" onclick="spdToggleAcc('scn-tcp',this)" aria-expanded="false"><span class="spd-acc-title"><strong data-i18n="tcpTitle">TCP</strong></span><span class="material-symbols-outlined spd-acc-arrow">expand_more</span></button>
+            <div class="spd-acc-body" id="acc-scn-tcp">
+              <div class="scn-pane active" id="scn-pane-tcp">
+                <div class="scn-hint px-hint" data-i18n="scnTcpTip">دامنه موردنظر را وارد کنید؛ IP دامنه (DNS) نمایش داده می‌شود و پینگ TCP آن به صورت زنده گزارش می‌شود. دامنه‌های Railway به صورت پیش‌فرض وجود دارند و قابل افزودن/حذف هستند.</div>
+                <div class="scn-dom-add">
+                  <input type="text" id="scn-tcp-domain" placeholder="example.proxy.rlwy.net" dir="ltr">
+                  <button class="btn btn-p" onclick="scnAddDomain()"><span data-i18n="addDomain">افزودن دامنه</span></button>
+                </div>
+                <div class="scn-dom-list" id="scn-tcp-list"></div>
+                <button class="btn btn-p" style="width:100%" onclick="scnRunTCP()"><span data-i18n="checkDomains">شروع بررسی دامنه‌ها</span></button>
+                <div class="scn-result-list scn-list" id="scn-tcp-results" style="margin-top:12px"></div>
+              </div>
+            </div>
+          </div>
+          <div class="spd-acc" style="margin-top:10px">
+            <button type="button" class="spd-acc-head" onclick="spdToggleAcc('scn-sni',this)" aria-expanded="false"><span class="spd-acc-title"><strong data-i18n="sniTitle">SNI</strong></span><span class="material-symbols-outlined spd-acc-arrow">expand_more</span></button>
+            <div class="spd-acc-body" id="acc-scn-sni">
+              <div class="scn-pane active" id="scn-pane-sni">
+                <div class="scn-cfg">
+                  <div class="f-g" style="flex:2">
+                    <label>SNI (Reality Target)</label>
+                    <div style="display:flex;gap:6px">
+                      <input type="text" id="scn-sni-input" placeholder="SNI را وارد کنید" dir="ltr" style="flex:1">
+                      <button class="btn btn-p" onclick="scnRunSingleSni()" title="اسکن این SNI"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></button>
+                    </div>
+                  </div>
+                </div>
+                <div class="scn-hint px-hint">SNI مورد نظر را وارد کنید یا روی «Auto Scan» کلیک کنید تا از لیست sni_reality_for_scan.txt اسکن شود. ۳ تای سریع‌تر ذخیره می‌شوند.</div>
+                <div class="scn-cfg" style="margin-top:8px">
+                  <button class="btn btn-p" onclick="scnRunAutoSni()" id="scn-sni-auto-btn"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>Auto Scan</button>
+                  <button class="btn btn-g" onclick="scnStopSni()">توقف</button>
+                </div>
+                <div class="scn-progress" style="margin-top:10px"><div class="scn-bar" id="scn-sni-bar"></div></div>
+                <div class="scn-stats">
+                  <div class="scn-chip"><b id="scn-sni-tried">۰</b><span>تست شده</span></div>
+                  <div class="scn-chip"><b id="scn-sni-found">۰</b><span>یافت شده</span></div>
+                  <div class="scn-chip"><b id="scn-sni-best">--</b><span>بهترین پینگ</span></div>
+                </div>
+                <div class="scn-list" id="scn-sni-list"><div class="scn-empty">برای شروع، «Auto Scan» را بزنید</div></div>
+                <div class="scn-saved" style="margin-top:14px">
+                  <div class="scn-saved-t">سریع‌ترین SNIs ذخیره‌شده (sni_reality.txt) — <button class="btn btn-sm btn-g" onclick="scnLoadSniResults()">بروزرسانی</button></div>
+                  <div class="scn-saved-tags" id="scn-sni-results"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- WORKER -->
+      <div class="tab-content hidden" id="tab-worker">
+        <div class="panel">
+          <div class="panel-h" style="justify-content:space-between">
+            <span class="glow">⚡ <span data-i18n="worker">Worker</span></span>
+            <span id="worker-badge" class="badge" style="margin-right:auto"></span>
+          </div>
+          <div class="px-hint" data-i18n="wk.sectionHint">سه بخش مستقل: هرکدام از Tunnel، Reverse و Worker اینباند جداگانه و تنظیمات خودش را دارد.</div>
+          <div class="spd-acc" style="margin-top:12px">
+            <button type="button" class="spd-acc-head" onclick="spdToggleAcc('wk-tunnel',this)" aria-expanded="false"><span class="spd-acc-title"><span class="material-symbols-outlined" style="font-size:17px">transit_enterexit</span><strong data-i18n="wk.tunnel">Tunnel</strong><span class="badge" id="wk-tun-badge"></span></span><span class="material-symbols-outlined spd-acc-arrow">expand_more</span></button>
+            <div class="spd-acc-body" id="acc-wk-tunnel">
+              <div class="px-hint" data-i18n="wk.tunnelHint">مسیر اتصال: User → Railway → Cloudflare Worker → Site. اینباند روی دامنه پنل با مسیر /tunnel/{uuid} ساخته می‌شود.</div>
+              <div class="set-row"><span class="set-lbl" data-i18n="workerStatus">وضعیت</span><span id="wk-tun-status" class="badge"></span></div>
+              <div class="set-row"><span class="set-lbl" data-i18n="workerPing">پینگ</span><span id="wk-tun-ping" dir="ltr" style="font-size:12px;color:var(--neon)">—</span></div>
+              <div class="set-row"><span class="set-lbl" data-i18n="domain">دامنه</span><span id="wk-tun-domain" dir="ltr" style="font-size:12px;color:var(--txt);word-break:break-all">—</span></div>
+              <div class="set-row"><span class="set-lbl" data-i18n="pathLabel">مسیر</span><span id="wk-tun-path" dir="ltr" style="font-size:12px;font-family:monospace;color:var(--txt)">—</span></div>
+              <div class="set-row"><span class="set-lbl" data-i18n="tunnelKv">KV اختصاصی</span><span id="wk-tun-kv" dir="ltr" style="font-size:11px;font-family:monospace;color:var(--txt2);word-break:break-all">—</span></div>
+              <div class="set-row"><span class="set-lbl" data-i18n="lastHeartbeat">آخرین Heartbeat</span><span id="wk-tun-hb" dir="ltr" style="font-size:12px;color:var(--txt2)">—</span></div>
+              <div class="set-row"><span class="set-lbl" data-i18n="tunnelInboundPath">اینباند</span><span id="wk-tun-inbound" dir="ltr" style="font-size:11px;font-family:monospace;color:var(--txt);word-break:break-all">—</span></div>
+              <div class="scn-list" id="wk-tun-logs" style="margin-top:10px;max-height:190px;overflow-y:auto"></div>
+              <div class="px-actions" style="margin-top:12px">
+                <button class="btn btn-p" type="button" onclick="workerCreateTunnel()"><span class="material-symbols-outlined" style="font-size:16px">add_task</span><span data-i18n="tunnelCreate">ایجاد اینباند Tunnel</span></button>
+                <button class="btn btn-g btn-sm" type="button" onclick="loadWorkerSections()"><span class="material-symbols-outlined" style="font-size:15px">refresh</span><span data-i18n="wk.refresh">بروزرسانی</span></button>
+              </div>
+            </div>
+          </div>
+          <div class="spd-acc" style="margin-top:10px">
+            <button type="button" class="spd-acc-head" onclick="spdToggleAcc('wk-reverse',this)" aria-expanded="false"><span class="spd-acc-title"><span class="material-symbols-outlined" style="font-size:17px">swap_horiz</span><strong data-i18n="wk.reverse">Reverse</strong><span class="badge" id="wk-rev-badge"></span></span><span class="material-symbols-outlined spd-acc-arrow">expand_more</span></button>
+            <div class="spd-acc-body" id="acc-wk-reverse">
+              <div class="px-hint" data-i18n="wk.reverseHint">مسیر اتصال: User → Cloudflare Worker → Railway → Site. اینباند جداگانه روی دامنه Worker با مسیر /reverse/{uuid} ساخته می‌شود.</div>
+              <div class="set-row"><span class="set-lbl" data-i18n="workerStatus">وضعیت</span><span id="wk-rev-status" class="badge"></span></div>
+              <div class="set-row"><span class="set-lbl" data-i18n="workerPing">پینگ</span><span id="wk-rev-ping" dir="ltr" style="font-size:12px;color:var(--neon)">—</span></div>
+              <div class="set-row"><span class="set-lbl" data-i18n="domain">دامنه</span><span id="wk-rev-domain" dir="ltr" style="font-size:12px;color:var(--txt);word-break:break-all">—</span></div>
+              <div class="set-row"><span class="set-lbl" data-i18n="pathLabel">مسیر</span><span id="wk-rev-path" dir="ltr" style="font-size:12px;font-family:monospace;color:var(--txt)">—</span></div>
+              <div class="set-row"><span class="set-lbl" data-i18n="tunnelKv">KV اختصاصی</span><span id="wk-rev-kv" dir="ltr" style="font-size:11px;font-family:monospace;color:var(--txt2);word-break:break-all">—</span></div>
+              <div class="set-row"><span class="set-lbl" data-i18n="tunnelInboundPath">اینباند</span><span id="wk-rev-inbound" dir="ltr" style="font-size:11px;font-family:monospace;color:var(--txt);word-break:break-all">—</span></div>
+              <div class="px-actions" style="margin-top:12px">
+                <button class="btn btn-p" type="button" onclick="workerCreateReverse()"><span class="material-symbols-outlined" style="font-size:16px">add_task</span><span data-i18n="wk.createReverse">ایجاد اینباند Reverse</span></button>
+                <button class="btn btn-g btn-sm" type="button" onclick="loadWorkerSections()"><span class="material-symbols-outlined" style="font-size:15px">refresh</span><span data-i18n="wk.refresh">بروزرسانی</span></button>
+              </div>
+            </div>
+          </div>
+          <div class="spd-acc" style="margin-top:10px">
+            <button type="button" class="spd-acc-head" onclick="spdToggleAcc('wk-main',this)" aria-expanded="false"><span class="spd-acc-title"><span class="material-symbols-outlined" style="font-size:17px">bolt</span><strong data-i18n="wk.worker">Worker</strong><span class="badge" id="wk-badge"></span></span><span class="material-symbols-outlined spd-acc-arrow">expand_more</span></button>
+            <div class="spd-acc-body" id="acc-wk-main">
+              <div class="px-hint" data-i18n="wk.workerHint">Worker چند-لوکیشن: اتصال به Cloudflare، ساخت اینباند جدا و مدیریت لوکیشن‌های خروجی. ترافیک هر کاربر بر اساس کشورش به نزدیک‌ترین لوکیشن می‌رود.</div>
+              <div id="wk-setup">
+                <div class="f-g" style="margin-top:10px">
+                  <label data-i18n="cfToken">Cloudflare API Token</label>
+                  <div style="display:flex;gap:8px">
+                    <input type="password" id="wk-token" dir="ltr" style="flex:1" autocomplete="off">
+                    <a class="btn btn-sm btn-g" href="https://dash.cloudflare.com/profile/api-tokens?permissionGroupKeys=%5B%7B%22key%22%3A%22page%22%2C%22type%22%3A%22edit%22%7D%2C%7B%22key%22%3A%22workers_scripts%22%2C%22type%22%3A%22edit%22%7D%2C%7B%22key%22%3A%22workers_kv_storage%22%2C%22type%22%3A%22edit%22%7D%5D&accountId=*&zoneId=all&name=LkPanel-Worker-Token" target="_blank" rel="noopener" style="text-decoration:none;white-space:nowrap"><span data-i18n="getToken">گرفتن توکن</span></a>
+                  </div>
+                </div>
+                <div class="px-hint" style="font-size:10px;color:var(--txt2);margin-bottom:6px" data-i18n="workerPermissionsHint">توکن باید دست‌کم Pages:Write و Workers KV Storage:Edit و خواندن Account داشته باشد. Account ID خودکار شناسایی می‌شود.</div>
+                <div class="px-hint" data-i18n="workerAutoName">یک پروژه Pages جدید با نام تصادفی و KV اختصاصی ساخته می‌شود — نیازی به ورود نام نیست.</div>
+                <button class="btn btn-p" style="width:100%;margin-top:10px" onclick="workerSetup()"><span data-i18n="createNewWorker">ساخت Worker جدید</span></button>
+              </div>
+              <div id="wk-managed" class="hidden">
+                <div class="set-row"><span class="set-lbl" data-i18n="workerStatus">وضعیت</span><span id="wk-status" class="badge"></span></div>
+                <div class="set-row"><span class="set-lbl" data-i18n="remoteStatus">Remote Status</span><span id="wk-remote" class="badge"></span></div>
+                <div class="set-row"><span class="set-lbl" data-i18n="workerUrl">Worker URL</span><a id="wk-url" href="#" target="_blank" rel="noopener" dir="ltr" style="color:var(--neon);font-size:12px;word-break:break-all"></a></div>
+                <div class="set-row"><span class="set-lbl" data-i18n="workerId">Pages Project</span><span id="wk-name" dir="ltr" style="font-size:12px;font-family:monospace;color:var(--txt)"></span></div>
+                <div class="set-row"><span class="set-lbl" data-i18n="kvId">KV ID</span><span id="wk-kv" dir="ltr" style="font-size:11px;font-family:monospace;color:var(--txt2);word-break:break-all"></span></div>
+                <div class="set-row"><span class="set-lbl" data-i18n="workerPing">پینگ</span><span id="wk-ping" dir="ltr" style="font-size:12px;color:var(--neon)">—</span></div>
+                <div class="set-row"><span class="set-lbl" data-i18n="onlineUsers">کاربران آنلاین</span><span id="wk-online" dir="ltr" style="font-size:12px;color:var(--green)"></span></div>
+                <div class="set-row"><span class="set-lbl" data-i18n="workerTraffic">مصرف Worker</span><span id="wk-traffic" dir="ltr" style="font-size:12px;color:var(--txt2)"></span></div>
+                <div class="set-row"><span class="set-lbl" data-i18n="lastSync">آخرین Sync</span><span id="wk-sync" dir="ltr" style="font-size:12px;color:var(--txt2)"></span></div>
+                <div class="set-row"><span class="set-lbl" data-i18n="lastError">آخرین خطا</span><span id="wk-error" dir="ltr" style="font-size:12px;color:var(--red);word-break:break-all"></span></div>
+                <div class="set-row"><span class="set-lbl" data-i18n="tunnelInboundPath">اینباند</span><span id="wk-inbound" dir="ltr" style="font-size:11px;font-family:monospace;color:var(--txt);word-break:break-all">—</span></div>
+                <div class="panel-h" style="margin-top:16px;border-top:1px solid var(--border);padding-top:12px"><span class="glow" data-i18n="wk.locations">لوکیشن‌ها (Multi-Location)</span><span id="wk-loc-count" class="badge badge-g" style="margin-right:auto"></span></div>
+                <div class="px-hint" data-i18n="wk.locationsHint">هر لوکیشن یک خروجی در کشور مشخص است. اگر لوکیشنی نسازید، Worker از منبع روزانه بارگذاری می‌کند.</div>
+                <div class="f-r" style="margin-top:10px;flex-wrap:wrap">
+                  <div class="f-g" style="margin:0"><label data-i18n="proxy.country">کشور</label><input id="wk-loc-country" type="text" dir="ltr" placeholder="Germany"></div>
+                  <div class="f-g" style="margin:0"><label data-i18n="wk.code">کد</label><input id="wk-loc-code" type="text" dir="ltr" placeholder="de" maxlength="16"></div>
+                </div>
+                <div class="f-r" style="flex-wrap:wrap">
+                  <div class="f-g" style="margin:0"><label data-i18n="proxy.host">آدرس پروکسی</label><input id="wk-loc-host" type="text" dir="ltr" placeholder="de.example.com"></div>
+                  <div class="f-g" style="margin:0"><label data-i18n="proxy.port">پورت</label><input id="wk-loc-port" type="number" dir="ltr" value="443" min="1" max="65535"></div>
+                </div>
+                <div class="px-actions">
+                  <button class="btn btn-p" type="button" onclick="wkAddLocation()"><span class="material-symbols-outlined" style="font-size:16px">add_location</span><span data-i18n="wk.addLocation">افزودن لوکیشن</span></button>
+                  <button class="btn btn-g" type="button" onclick="workerSyncSource()"><span class="material-symbols-outlined" style="font-size:16px">cloud_sync</span><span data-i18n="updateNow">بروزرسانی از منبع</span></button>
+                </div>
+                <div class="set-row" style="border-bottom:none"><span class="set-lbl" data-i18n="autoSyncHourly">بروزرسانی خودکار (ساعتی)</span><button type="button" class="ios-switch" id="wk-auto" onclick="workerToggleAuto()"></button></div>
+                <span id="wk-source-status" style="font-size:11px;color:var(--txt2);width:100%"></span>
+                <div id="wk-locations" style="margin-top:10px"></div>
+                <div class="px-actions" style="margin-top:16px;border-top:1px solid var(--border);padding-top:12px">
+                  <button class="btn btn-p" type="button" onclick="workerCreateInbound()"><span class="material-symbols-outlined" style="font-size:16px">add_task</span><span data-i18n="wk.createInbound">ایجاد اینباند Worker</span></button>
+                  <button class="btn btn-g" type="button" onclick="workerSync()"><span class="material-symbols-outlined" style="font-size:16px">sync</span><span data-i18n="wk.deploy">Deploy / Sync</span></button>
+                  <button class="btn btn-r" type="button" onclick="workerDisconnect()"><span data-i18n="removeConn">حذف اتصال Worker</span></button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BOT -->
+      <div class="tab-content hidden" id="tab-bot">
+        <div class="panel">
+          <div class="panel-h" style="justify-content:space-between">
+            <span class="glow">🤖 <span data-i18n="bot">Telegram Bot</span></span>
+            <span id="bot-status-badge" class="badge badge-b">OFF</span>
+          </div>
+          <div class="f-r" style="margin-top:10px">
+            <div class="f-g"><label>Telegram Bot API Key</label><input id="bot-token" type="password" dir="ltr" autocomplete="new-password" placeholder="123456789:AA..."></div>
+            <div class="f-g"><label>دامنه اتصال کانفیگ‌ها و سابسکریپشن (Domain / Host)</label><input id="bot-domain" type="text" dir="ltr" placeholder="sub.example.com یا 1.2.3.4"></div>
+          </div>
+          <div class="bot-note">توکن فقط سمت سرور ذخیره می‌شود. دامنه بالا برای اتصال کانفیگ‌های تولیدی و ساخت لینک‌های سابسکریپشن در تلگرام استفاده می‌شود تا کانفیگ‌ها با 127.0.0.1 ساخته نشوند.</div>
+          <div class="bot-inline-actions">
+            <button class="btn btn-p" onclick="saveBotConfig()">ذخیره تنظیمات</button>
+            <button class="btn btn-g" onclick="testBotConfig()">تست Bot</button>
+            <button class="btn btn-g" onclick="loadBot()">بروزرسانی</button>
+          </div>
+          <div id="bot-account-info" class="bot-status-grid"></div>
+        </div>
+        <div class="panel" style="margin-top:10px">
+          <div class="bot-tabs">
+            <button id="bot-tab-channel-btn" class="bot-tab active" onclick="switchBotSubtab('channel')">📣 Channel Bot</button>
+            <button id="bot-tab-sell-btn" class="bot-tab" onclick="switchBotSubtab('sell')">🛒 Sell Bot</button>
+          </div>
+          <div id="bot-sub-channel" class="bot-subpanel active">
+            <div class="bot-acc-list">
+              <div class="bot-acc" id="botacc-channel-main">
+                <button type="button" class="bot-acc-head" onclick="toggleBotAcc('botacc-channel-main')" aria-expanded="false"><span>📣 انتشار زمان‌بندی‌شده</span><span class="material-symbols-outlined">expand_more</span></button>
+                <div class="bot-acc-body">
+                  <div class="f-g"><label>فعال‌سازی</label><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input id="bot-channel-enabled" type="checkbox"> ایجاد و ارسال خودکار</label></div>
+                  <div class="f-g"><label>لینک Channel</label><input id="bot-channel" type="text" dir="ltr" placeholder="https://t.me/mychannel یا @mychannel"></div>
+                  <div class="f-r">
+                    <div class="f-g"><label>زمان‌بندی (دقیقه)</label><input id="bot-channel-interval" type="number" min="1" max="10080" value="60" dir="ltr"></div>
+                    <div class="f-g"><label>پیشوند نام کاربر</label><input id="bot-channel-prefix" type="text" dir="ltr" value="lk"></div>
+                  </div>
+                  <div class="f-r">
+                    <div class="f-g"><label>ترافیک هر کاربر (GB) — ۰ نامحدود</label><input id="bot-channel-traffic" type="number" min="0" step="0.1" value="0" dir="ltr"></div>
+                    <div class="f-g"><label>اعتبار (روز) — ۰ نامحدود</label><input id="bot-channel-days" type="number" min="0" value="30" dir="ltr"></div>
+                  </div>
+                  <div class="f-g"><label>Inbound</label><select id="bot-channel-inbound" dir="ltr"><option value="">Default TLS/WS</option></select></div>
+                  <div class="f-g"><label>جایگزینی خودکار</label><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input id="bot-channel-replace" type="checkbox" checked> بعد از ارسال موفق، کاربر قبلی حذف شود</label></div>
+                  <div class="bot-note">ترتیب امن: ساخت کاربر جدید → تولید Subscription/QR → ارسال موفق به Channel → حذف کاربر قبلی. اگر ارسال ناموفق باشد، کاربر قبلی حفظ می‌شود.</div>
+                  <div class="bot-inline-actions"><button class="btn btn-p" onclick="saveBotConfig()">ذخیره Channel Bot</button><button class="btn btn-g" onclick="runChannelBotNow()">ساخت و ارسال الان</button></div>
+                </div>
+              </div>
+              <div class="bot-acc" id="botacc-channel-status">
+                <button type="button" class="bot-acc-head" onclick="toggleBotAcc('botacc-channel-status')" aria-expanded="false"><span>📊 وضعیت Channel Bot</span><span class="material-symbols-outlined">expand_more</span></button>
+                <div class="bot-acc-body"><div id="bot-channel-next" class="bot-status-grid"></div></div>
+              </div>
+            </div>
+          </div>
+          <div id="bot-sub-sell" class="bot-subpanel">
+            <div class="bot-acc-list">
+              <div class="bot-acc" id="botacc-sell-general">
+                <button type="button" class="bot-acc-head" onclick="toggleBotAcc('botacc-sell-general')" aria-expanded="false"><span>⚙️ تنظیمات Sell Bot</span><span class="material-symbols-outlined">expand_more</span></button>
+                <div class="bot-acc-body">
+                  <div class="f-g"><label>فعال‌سازی</label><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input id="bot-sell-enabled" type="checkbox"> فعال‌سازی فروش و بررسی رسید</label></div>
+                  <div class="f-g"><label>Admin Telegram Chat ID(s)</label><input id="bot-sell-admin" type="text" dir="ltr" placeholder="123456789, 987654321"></div>
+                  <div class="bot-note">شناسه عددی ادمین‌ها (می‌توانید چند شناسه را با کاما جدا کنید). ادمین‌ها به منوی پیشرفته /panel و تایید سفارشات دسترسی دارند.</div>
+                </div>
+              </div>
+              <div class="bot-acc" id="botacc-sell-products">
+                <button type="button" class="bot-acc-head" onclick="toggleBotAcc('botacc-sell-products')" aria-expanded="false"><span>🛍 محصولات و Planها</span><span class="material-symbols-outlined">expand_more</span></button>
+                <div class="bot-acc-body">
+                  <div class="bot-note">هر Plan کاملاً مستقل است و می‌تواند Inbound، حجم، زمان، قیمت و پیشوند کاربر خودش را داشته باشد. حذف آخرین Plan نیز مجاز است.</div>
+                  <input id="bot-plan-id" type="hidden">
+                  <div class="bot-plan-grid" style="margin-top:10px">
+                    <div class="f-g"><label>اسم Plan</label><input id="bot-plan-name" type="text" placeholder="مثلاً 100GB / 30D"></div>
+                    <div class="f-g"><label>قیمت</label><input id="bot-plan-price" type="text" dir="ltr" placeholder="250000 تومان"></div>
+                    <div class="f-g"><label>Inbound</label><select id="bot-plan-inbound" dir="ltr"><option value="">انتخاب Inbound</option></select></div>
+                    <div class="f-g"><label>حجم (GB) — ۰ نامحدود</label><input id="bot-plan-traffic" type="number" min="0" step="0.1" value="50" dir="ltr"></div>
+                    <div class="f-g"><label>زمان (روز) — ۰ نامحدود</label><input id="bot-plan-days" type="number" min="0" value="30" dir="ltr"></div>
+                    <div class="f-g"><label>پیشوند کاربر</label><input id="bot-plan-prefix" type="text" dir="ltr" value="shop"></div>
+                  </div>
+                  <div class="bot-inline-actions"><button class="btn btn-p" onclick="saveSellPlan()"><span id="bot-plan-save-label">➕ افزودن Plan</span></button><button class="btn btn-g" onclick="resetSellPlanForm()">پاک کردن فرم</button></div>
+                  <div id="bot-sell-plans-list"></div>
+                </div>
+              </div>
+              <div class="bot-acc" id="botacc-sell-join">
+                <button type="button" class="bot-acc-head" onclick="toggleBotAcc('botacc-sell-join')" aria-expanded="false"><span>🔒 جوین اجباری</span><span class="material-symbols-outlined">expand_more</span></button>
+                <div class="bot-acc-body">
+                  <div class="bot-note">هر تعداد Channel که بخواهی می‌توانی اضافه کنی. برای @username، Join Link خودکار ساخته می‌شود. برای کانال عددی، Join Link را هم وارد کن.</div>
+                  <div id="bot-join-list" class="bot-join-list"></div>
+                  <div class="bot-inline-actions"><button class="btn btn-g" onclick="addBotJoinRow()">➕ افزودن Channel</button></div>
+                </div>
+              </div>
+              <div class="bot-acc" id="botacc-sell-payment">
+                <button type="button" class="bot-acc-head" onclick="toggleBotAcc('botacc-sell-payment')" aria-expanded="false"><span>💳 پرداخت</span><span class="material-symbols-outlined">expand_more</span></button>
+                <div class="bot-acc-body">
+                  <div class="f-g"><label>لینک پرداخت (اختیاری)</label><input id="bot-sell-payment" type="url" dir="ltr" placeholder="https://..."></div>
+                  <div class="f-g"><label>اطلاعات پرداخت</label><textarea id="bot-sell-payment-details" rows="4" placeholder="شماره کارت، نام صاحب حساب، توضیحات پرداخت و ..."></textarea></div>
+                </div>
+              </div>
+              <div class="bot-acc" id="botacc-sell-support">
+                <button type="button" class="bot-acc-head" onclick="toggleBotAcc('botacc-sell-support')" aria-expanded="false"><span>💬 پشتیبانی</span><span class="material-symbols-outlined">expand_more</span></button>
+                <div class="bot-acc-body">
+                  <div class="f-g"><label>Username / لینک پشتیبانی</label><input id="bot-sell-support" type="text" dir="ltr" placeholder="@support یا https://t.me/support"></div>
+                  <div class="f-g"><label>متن بخش پشتیبانی</label><textarea id="bot-sell-support-text" rows="3" placeholder="برای پشتیبانی ..."></textarea></div>
+                </div>
+              </div>
+              <div class="bot-acc" id="botacc-sell-orders">
+                <button type="button" class="bot-acc-head" onclick="toggleBotAcc('botacc-sell-orders')" aria-expanded="false"><span>🧾 سفارش‌ها و وضعیت فروش</span><span class="material-symbols-outlined">expand_more</span></button>
+                <div class="bot-acc-body">
+                  <div class="bot-note">خریدار: محصول → پرداخت → ارسال رسید. ادمین: دریافت رسید → ✅ تأیید و فعال‌سازی / ❌ رد. برای جلوگیری از دوباره‌کاری، فعال‌سازی idempotent است.</div>
+                  <div id="bot-sell-orders" class="bot-status-grid"></div>
+                  <div class="bot-inline-actions"><button class="btn btn-p" onclick="saveBotConfig()">ذخیره Sell Bot</button></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SETTINGS -->
+      <div class="tab-content hidden" id="tab-settings">
+        <div class="spd-acc" style="margin-bottom:10px">
+          <button type="button" class="spd-acc-head" onclick="spdToggleAcc('set-appear',this)" aria-expanded="false"><span class="spd-acc-title"><strong data-i18n="appearance">تنظیمات ظاهری</strong></span><span class="material-symbols-outlined spd-acc-arrow">expand_more</span></button>
+          <div class="spd-acc-body" id="acc-set-appear">
+            <div class="panel settings-box">
+              <div class="panel-h"><span class="glow" data-i18n="appearance">تنظیمات ظاهری</span></div>
+              <div class="set-row">
+                <span class="set-lbl" data-i18n="themeMode">حالت نمایش</span>
+                <div style="display:flex;gap:8px">
+                  <button class="btn btn-sm btn-g" onclick="setTheme('dark')"><span data-i18n="dark">تاریک</span></button>
+                  <button class="btn btn-sm btn-g" onclick="setTheme('light')"><span data-i18n="light">روشن</span></button>
+                </div>
+              </div>
+              <div class="divider"></div>
+              <div class="panel-h" style="margin-top:0"><span class="glow" data-i18n="panelMusic">Panel Music</span></div>
+              <div class="set-row"><span class="set-lbl" data-i18n="bgMusic">Background Music</span><button type="button" class="ios-switch on" id="audio-autoplay" onclick="togglePanelAudio()" data-i18n-title="toggleMusic" title="روشن/خاموش"></button></div>
+              <div class="sub-link" id="audio-file" style="margin-top:8px;margin-bottom:0"></div>
+              <audio id="panel-audio-player" style="display:none"></audio>
+            </div>
+          </div>
+        </div>
+        <div class="spd-acc" style="margin-bottom:10px">
+          <button type="button" class="spd-acc-head" onclick="spdToggleAcc('set-adv',this)" aria-expanded="false"><span class="spd-acc-title"><strong data-i18n="advanced">Advanced</strong></span><span class="material-symbols-outlined spd-acc-arrow">expand_more</span></button>
+          <div class="spd-acc-body" id="acc-set-adv">
+            <div class="panel settings-box">
+              <div class="panel-h"><span class="glow" data-i18n="advanced">Advanced</span></div>
+              <div class="settings-inner-block">
+                <div class="panel-h"><span class="glow" data-i18n="serverInfo">Server Info</span></div>
+                <div id="server-info-wrap" style="padding:4px 0"></div>
+              </div>
+              <div class="settings-inner-block">
+                <div class="panel-h"><span class="glow" data-i18n="changePassword">Change Password</span></div>
+                <form onsubmit="changePassword(event)">
+                  <div class="f-g"><label data-i18n="curPass">رمز فعلی</label><input type="password" id="cp-old" required></div>
+                  <div class="f-g"><label data-i18n="newPass">رمز جدید</label><input type="password" id="cp-new" required minlength="4"></div>
+                  <button class="btn btn-p" style="width:100%"><span data-i18n="changePassBtn">تغییر رمز</span></button>
+                </form>
+              </div>
+              <div class="settings-inner-block">
+                <div class="panel-h"><span class="glow" data-i18n="panelUpdate">بروزرسانی پنل</span></div>
+                <div class="px-hint" data-i18n="panelUpdateHint">با زدن این دکمه، نسخه نصب‌شده پنل با آخرین نسخه منتشرشده مقایسه می‌شود. برای اعمال نسخه جدید، پنل را روی سرور خود بروزرسانی و ری‌استارت کنید.</div>
+                <div id="upd-ver" style="font-size:11px;color:var(--txt2);margin-top:8px;line-height:1.8"></div>
+                <div style="display:flex;gap:8px;margin-top:10px"><button class="btn btn-p" style="flex:1" type="button" id="upd-btn" onclick="runPanelUpdate()"><span data-i18n="updatePanel">بروزرسانی</span></button></div>
+                <pre id="upd-log" dir="ltr" style="display:none;margin-top:10px;padding:10px;border-radius:8px;background:var(--bg2,#111);color:var(--green);font-size:11px;max-height:220px;overflow-y:auto;white-space:pre-wrap;font-family:monospace"></pre>
+              </div>
+              <div class="settings-inner-block">
+                <div class="panel-h"><span class="glow" data-i18n="backupRestore">بکاپ و بازیابی</span></div>
+                <div class="px-hint" data-i18n="backupRestoreHint">بکاپ کامل شامل: کاربران، لینک‌ها، اینباندها، اسکن‌ها، تنظیمات، رمز، گروه‌ها و تنظیمات Worker. فایل JSON دانلود/آپلود می‌شود.</div>
+                <div style="display:flex;gap:8px;margin-top:10px">
+                  <button class="btn btn-p" style="flex:1" onclick="downloadBackup()"><span data-i18n="backup">بکاپ</span></button>
+                  <button class="btn btn-g" style="flex:1" onclick="document.getElementById('restore-file').click()"><span data-i18n="restore">ریستور</span></button>
+                </div>
+                <input type="file" id="restore-file" accept=".json" style="display:none" onchange="uploadRestore(this)">
+                <pre id="restore-log" dir="ltr" style="display:none;margin-top:10px;padding:10px;border-radius:8px;background:var(--bg2,#111);color:var(--orange);font-size:11px;max-height:150px;overflow-y:auto;white-space:pre-wrap;font-family:monospace"></pre>
+              </div>
+              <div class="settings-inner-block">
+                <div class="panel-h"><span class="glow">پیشوند کانفیگ</span></div>
+                <div class="px-hint">پیشوند نام همه کانفیگ‌های ساخته‌شده. پیش‌فرض: Lk- (هر اینباند می‌تواند پیشوند اختصاصی داشته باشد).</div>
+                <div style="display:flex;gap:8px;margin-top:8px">
+                  <input type="text" id="set-config-prefix" dir="ltr" placeholder="Lk-" style="flex:1">
+                  <button class="btn btn-p" type="button" onclick="saveConfigPrefix()">ذخیره</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- AUTO CONFIG -->
+      <div class="tab-content hidden" id="tab-autoconfig">
+        <div class="panel">
+          <div style="text-align:center;padding:30px 0 20px">
+            <button class="btn btn-p" id="ac-auto-btn" onclick="acStart()" style="font-size:16px;padding:14px 60px;border-radius:14px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" style="vertical-align:-3px"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg><span data-i18n="acAutoBtn">Auto</span></button>
+            <div class="px-hint" style="margin-top:12px" data-i18n="acHint">اسکن کامل خودکار: پینگ دامنه‌ها → انتخاب Railway/Cloudflare → اسکن IP → تست دامنه‌های TCP → اسکن SNI → پینگ نهایی پنل. همه مراحل با اینترنت خود شما انجام می‌شود.</div>
+          </div>
+          <div class="f-g" id="ac-domain-wrap" style="display:flex;gap:8px"><input type="text" id="ac-domain" dir="ltr" placeholder="your-panel.up.railway.app" style="flex:1"></div>
+          <div class="scn-list" id="ac-log" style="margin-top:12px;display:none"></div>
+          <div id="ac-results" style="margin-top:12px"></div>
+        </div>
+      </div>
+
+      <!-- TUNNEL -->
+      <div class="tab-content hidden" id="tab-tunnel">
+        <div class="panel" id="tunnel-notready"><div class="panel-h"><span class="glow" data-i18n="tunnel">Tunnel</span></div><div class="px-hint" data-i18n="tunnelNotReady">ابتدا یک Worker در تب Worker بسازید — بخش Tunnel بعد از ساخت Worker فعال می‌شود.</div></div>
+        <div class="panel hidden" id="tunnel-ready">
+          <div class="panel-h" style="justify-content:space-between"><span class="glow" data-i18n="tunnel">Tunnel</span><span id="tn-status-badge" class="badge badge-g" style="margin-right:auto"></span></div>
+          <div class="set-row"><span class="set-lbl" data-i18n="tunnelPath">مسیر اتصال</span><span dir="ltr" style="font-size:12px;color:var(--txt)">User → Railway → Cloudflare Worker → Site</span></div>
+          <div class="set-row"><span class="set-lbl" data-i18n="workerPing">پینگ سرور تا Worker</span><span id="tn-ping" dir="ltr" style="font-size:12px;color:var(--neon)">--</span></div>
+          <div class="set-row"><span class="set-lbl" data-i18n="workerUrl">Worker URL</span><a id="tn-url" href="#" target="_blank" rel="noopener" dir="ltr" style="color:var(--neon);font-size:12px"></a></div>
+          <div class="set-row"><span class="set-lbl" data-i18n="tunnelKv">KV اختصاصی Tunnel</span><span id="tn-kv" dir="ltr" style="font-size:11px;font-family:monospace;color:var(--txt2);word-break:break-all"></span></div>
+          <div class="set-row"><span class="set-lbl" data-i18n="tunnelInboundPath">اینباند (TLS WS)</span><span id="tn-inbound-path" dir="ltr" style="font-size:11px;font-family:monospace;color:var(--txt)"></span></div>
+          <div class="set-row"><span class="set-lbl" data-i18n="lastHeartbeat">آخرین Heartbeat</span><span id="tn-heartbeat" dir="ltr" style="font-size:12px;color:var(--txt2)"></span></div>
+          <div class="panel-h" style="margin-top:18px;border-top:1px solid var(--border);padding-top:14px"><span class="glow" data-i18n="reverse">Reverse</span></div>
+          <div class="set-row" style="border-bottom:none"><span class="set-lbl"><span data-i18n="reverseSwitch">حالت Reverse</span><div class="px-hint" style="font-size:10px;margin-top:2px" data-i18n="reverseHint">با روشن کردن این سوییچ، مسیر اتصال برعکس می‌شود: User → Worker → Railway → Site. دامنه کانفیگ، دامنه Worker و مسیر /reverse/{uuid} خواهد بود.</div></span><button type="button" class="ios-switch" id="tn-reverse-sw" onclick="tunnelToggleReverse(this)" title="Reverse"></button></div>
+          <div id="tn-reverse-info" class="hidden">
+            <div class="set-row"><span class="set-lbl" data-i18n="tunnelPath">مسیر اتصال</span><span dir="ltr" style="font-size:12px;color:var(--txt)">User → Cloudflare Worker → Railway → Site</span></div>
+            <div class="set-row"><span class="set-lbl" data-i18n="workerPing">پینگ سرور تا Worker</span><span id="tn-reverse-ping" dir="ltr" style="font-size:12px;color:var(--neon)">--</span></div>
+            <div class="set-row"><span class="set-lbl" data-i18n="tunnelInboundPath">دامنه و مسیر</span><span id="tn-reverse-path" dir="ltr" style="font-size:11px;font-family:monospace;color:var(--txt)"></span></div>
+            <div class="set-row"><span class="set-lbl" data-i18n="tunnelKv">KV اختصاصی Reverse</span><span id="tn-reverse-kv" dir="ltr" style="font-size:11px;font-family:monospace;color:var(--txt2);word-break:break-all"></span></div>
+          </div>
+          <div class="scn-list" id="tn-logs" style="margin-top:10px"></div>
+          <button class="btn btn-p" style="width:100%;margin-top:12px" id="tn-create-btn" onclick="tunnelCreate()"><span data-i18n="tunnelCreate">ایجاد اینباند Tunnel</span></button>
+        </div>
+      </div>
+
+      <!-- PROXY -->
+      
+      <div class="tab-content hidden" id="tab-proxy">
+        <div class="panel">
+          <div class="panel-h" style="justify-content:space-between"><span class="glow">🌐 <span data-i18n="proxy.nav">پروکسی خارجی</span></span><span id="px-count" class="badge" style="margin-right:auto"></span></div>
+          <div class="px-hint" data-i18n="proxy.intro">آدرس و پورت پروکسی را وارد کنید؛ پنل SOCKS4، SOCKS5، HTTP و HTTPS را آزمایش می‌کند و سریع‌ترین اتصال موفق را انتخاب می‌کند. برای هر پروکسی یک اینباند TLS+WS روی دامنه پنل ساخته می‌شود.</div>
+          <button class="btn btn-p" style="width:100%;margin-top:12px" type="button" onclick="pxToggleAdd(this)" aria-expanded="false"><span class="material-symbols-outlined" style="font-size:16px">add_circle</span><span data-i18n="proxy.add">افزودن پروکسی</span></button>
+          <div class="px-add hidden" id="px-add">
+            <div class="f-r" style="margin-top:12px">
+              <div class="f-g"><label data-i18n="proxy.host">آدرس (IP یا دامنه)</label><input id="px-host" type="text" dir="ltr" placeholder="1.2.3.4" autocomplete="off" oninput="pxInvalidateTest()"></div>
+              <div class="f-g"><label data-i18n="proxy.port">پورت</label><input id="px-port" type="number" min="1" max="65535" dir="ltr" placeholder="1080" oninput="pxInvalidateTest()"></div>
+            </div>
+            <div class="f-g"><label data-i18n="proxy.country">کشور (اختیاری)</label><input id="px-country" type="text" dir="ltr" placeholder="Germany یا DE یا 🇩🇪" oninput="pxInvalidateTest()"></div>
+            <div class="spd-acc" style="margin-top:10px">
+              <button type="button" class="spd-acc-head" onclick="spdToggleAcc('px-auth',this)" aria-expanded="false"><span class="spd-acc-title"><strong data-i18n="proxy.auth">نام کاربری و رمز (اختیاری)</strong></span><span class="material-symbols-outlined spd-acc-arrow">expand_more</span></button>
+              <div class="spd-acc-body" id="acc-px-auth">
+                <div class="px-hint" data-i18n="proxy.authHint">اگر پروکسی شناسه نمی‌خواهد این بخش را باز نکنید.</div>
+                <div class="f-r" style="margin-top:8px">
+                  <div class="f-g"><label data-i18n="proxy.username">Username</label><input id="px-username" type="text" dir="ltr" autocomplete="off" oninput="pxInvalidateTest()"></div>
+                  <div class="f-g"><label data-i18n="proxy.password">Password</label><input id="px-password" type="password" dir="ltr" autocomplete="new-password" oninput="pxInvalidateTest()"></div>
+                </div>
+              </div>
+            </div>
+            <button class="btn btn-g" style="width:100%;margin-top:12px" type="button" id="px-test-btn" onclick="pxTestNew()"><span class="material-symbols-outlined" style="font-size:16px">network_check</span><span data-i18n="proxy.test">تست اتصال</span></button>
+            <div class="px-test" id="px-test-result"></div>
+            <button class="btn btn-p hidden" style="width:100%;margin-top:10px" type="button" id="px-save-btn" onclick="pxSaveNew()"><span class="material-symbols-outlined" style="font-size:16px">save</span><span data-i18n="proxy.save">ذخیره پروکسی</span></button>
+          </div>
+          <div id="proxy-list" style="margin-top:6px"></div>
+        </div>
+      </div>
+
+      <!-- SUGGEST -->
+      <div class="tab-content hidden" id="tab-suggest">
+        <div class="panel">
+          <div class="panel-h"><span class="glow">Suggest</span></div>
+          <div class="px-hint">Useful proxy, client, scanner, and Worker resources.</div>
+          <div class="spd-acc-list suggest-acc-list" style="margin-top:12px">
+            <section class="spd-acc">
+              <button type="button" class="spd-acc-head" onclick="spdToggleAcc('suggest-free-proxy',this)" aria-expanded="false" aria-controls="acc-suggest-free-proxy"><span class="spd-acc-title"><strong>Free Proxy List</strong></span><span class="material-symbols-outlined spd-acc-arrow">expand_more</span></button>
+              <div class="spd-acc-body" id="acc-suggest-free-proxy">
+                <div class="suggest-link-list">
+                  <a href="https://free-proxy-list.net/" target="_blank" rel="noopener noreferrer"><span>Free-Proxy-List.net</span><span class="material-symbols-outlined">open_in_new</span></a>
+                  <a href="https://proxyscrape.com/free-proxy-list" target="_blank" rel="noopener noreferrer"><span>ProxyScrape Free Proxy List</span><span class="material-symbols-outlined">open_in_new</span></a>
+                  <a href="https://geonode.com/free-proxy-list" target="_blank" rel="noopener noreferrer"><span>GeoNode Free Proxy List</span><span class="material-symbols-outlined">open_in_new</span></a>
+                  <a href="https://www.freeproxy.world/" target="_blank" rel="noopener noreferrer"><span>FreeProxy.World</span><span class="material-symbols-outlined">open_in_new</span></a>
+                  <a href="https://hide.mn/en/proxy-list/" target="_blank" rel="noopener noreferrer"><span>Hide.mn Proxy List</span><span class="material-symbols-outlined">open_in_new</span></a>
+                  <a href="https://spys.one/en/" target="_blank" rel="noopener noreferrer"><span>Spys.one</span><span class="material-symbols-outlined">open_in_new</span></a>
+                  <a href="https://proxydb.net/" target="_blank" rel="noopener noreferrer"><span>ProxyDB</span><span class="material-symbols-outlined">open_in_new</span></a>
+                </div>
+              </div>
+            </section>
+            <section class="spd-acc">
+              <button type="button" class="spd-acc-head" onclick="spdToggleAcc('suggest-worker-panel',this)" aria-expanded="false" aria-controls="acc-suggest-worker-panel"><span class="spd-acc-title"><strong>Worker Panel</strong></span><span class="material-symbols-outlined spd-acc-arrow">expand_more</span></button>
+              <div class="spd-acc-body" id="acc-suggest-worker-panel">
+                <div class="suggest-link-list">
+                  <a href="https://wizard.bpb-panel.workers.dev/" target="_blank" rel="noopener noreferrer"><span>BPB Panel Wizard</span><span class="material-symbols-outlined">open_in_new</span></a>
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>
+
+      <!-- NODES -->
+      <div class="tab-content hidden" id="tab-nodes">
+        <div class="panel nodes-panel" style="margin-bottom:10px">
+          <div class="panel-h"><span class="glow" data-i18n="nodes">نودها</span></div>
+          <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap">
+            <button class="btn btn-p" onclick="openNodeModal()"><span data-i18n="addNode">افزودن نود</span></button>
+            <button class="btn btn-g" onclick="syncAllNodes()"><span data-i18n="syncAllNodes">همگام‌سازی همه</span></button>
+          </div>
+          <div id="nodes-list"></div>
+        </div>
+      </div>
+
+      <!-- TM -->
+      <div class="tab-content hidden" id="tab-tm">
+        <div class="tm-subnav" id="tm-subnav" role="tablist">
+          <button class="tm-subtab active" type="button" role="tab" aria-selected="true" data-tm-section="server" onclick="tmSetSection('server')"><span class="material-symbols-outlined">dns</span><span data-i18n="tm.server">Server</span></button>
+          <button class="tm-subtab" type="button" role="tab" aria-selected="false" data-tm-section="configure" onclick="tmSetSection('configure')"><span class="material-symbols-outlined">hub</span><span data-i18n="tm.configure">Configure</span></button>
+          <span class="tm-subtab-short" data-i18n="tm.short">TM</span>
+        </div>
+        <div class="tm-statusbar" id="tm-statusbar">
+          <span class="tm-sb-item"><b id="tm-sb-state">—</b></span>
+          <span class="tm-sb-item"><span data-i18n="tm.servers">Servers</span> <b id="tm-sb-servers">0</b></span>
+          <span class="tm-sb-item"><span data-i18n="tm.links">Links</span> <b id="tm-sb-links">0</b></span>
+          <span class="tm-sb-item"><span data-i18n="tm.entry">Entry</span> <b id="tm-sb-entry">—</b></span>
+          <span class="tm-sb-item"><span data-i18n="tm.exit">Exit</span> <b id="tm-sb-exit">—</b></span>
+          <span class="tm-sb-item tm-sb-chain-ping"><span data-i18n="tm.chainPing">Chain</span><b id="tm-sb-chain-ping" dir="ltr">—</b><button type="button" class="tm-edge-ping" id="tm-sb-chain-ping-btn" onclick="tmChainPing()" title="entry → exit" aria-label="chain ping"><svg class="tm-link-ping-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M2 12h4"/><path d="M18 12h4"/><path d="M8 12a4 4 0 0 1 8 0" opacity=".55"/><path d="M6 12a6 6 0 0 1 12 0" opacity=".3"/><circle cx="12" cy="12" r="1.6" fill="currentColor" stroke="none"/></svg></button></span>
+          <span class="tm-sb-item tm-sb-bal hidden" id="tm-sb-bal"><span data-i18n="tm.balancer">Balancer</span> <b id="tm-sb-chain">—</b></span>
+          <span class="tm-sb-item tm-sb-last"><span data-i18n="tm.lastApply">Last Apply</span> <b id="tm-sb-apply">—</b></span>
+        </div>
+        <div class="tm-section" id="tm-section-server">
+          <div class="panel">
+            <div class="panel-h" style="justify-content:space-between">
+              <span class="glow"><span data-i18n="tm.title">Tunnel Management</span> · <span data-i18n="tm.server">Server</span></span>
+              <button class="btn btn-p" type="button" onclick="tmOpenServerModal()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg><span data-i18n="tm.addServer">Add Server</span></button>
+            </div>
+            <div class="px-hint" data-i18n="tm.serverHint">Each server is a real Lk panel Node. The API key is stored server-side only and is never sent to the browser.</div>
+            <div class="tm-servers" id="tm-server-list"><div class="empty" data-i18n="loading">در حال بارگذاری...</div></div>
+          </div>
+        </div>
+        <div class="tm-section hidden" id="tm-section-configure">
+          <div class="tm-toolbar"><div class="tm-toolbar-group"><span class="tm-auto" id="tm-auto-state"><span class="material-symbols-outlined">bolt</span><span data-i18n="tm.auto">Auto</span></span></div></div>
+          <div class="tm-hintbar"><span data-i18n="tm.configureHint">Long-press a box to move it · drag a line to move it, drag its end near another box to snap them together · the two keys on each box connect it.</span><span class="tm-mode" id="tm-mode-label"></span></div>
+          <div class="tm-canvas-wrap" id="tm-canvas-wrap">
+            <div class="tm-canvas" id="tm-canvas">
+              <svg class="tm-edges" id="tm-edges" xmlns="http://www.w3.org/2000/svg"><g id="tm-edge-layer"></g></svg>
+              <div class="tm-nodes" id="tm-node-layer"></div>
+            </div>
+            <div class="tm-zoom" id="tm-zoom">
+              <button type="button" aria-label="zoom in" onclick="tmZoomButton(1.18)"><span class="material-symbols-outlined">add</span></button>
+              <button type="button" aria-label="zoom out" onclick="tmZoomButton(1/1.18)"><span class="material-symbols-outlined">remove</span></button>
+              <button type="button" aria-label="fit to screen" onclick="tmFit()"><span class="material-symbols-outlined">fit_screen</span></button>
+            </div>
+            <div class="tm-progress" id="tm-progress"></div>
+          </div>
+          <div class="tm-preview panel">
+            <div class="panel-h"><span class="glow"><span data-i18n="tm.generated">Generated client route</span></span></div>
+            <div class="px-hint" data-i18n="tm.generatedHint">This is exactly what a user assigned to the TM inbound receives. Set determines which server the client dials.</div>
+            <pre class="cfg-code" id="tm-config-preview" dir="ltr">—</pre>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <button class="btn btn-g btn-sm" type="button" onclick="tmGenerate()"><span class="material-symbols-outlined" style="font-size:14px">refresh</span><span data-i18n="tm.regenerate">Regenerate</span></button>
+              <button class="btn btn-g btn-sm" type="button" onclick="tmCopyConfig()"><span class="material-symbols-outlined" style="font-size:14px">content_copy</span><span data-i18n="copy">Copy</span></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CONTACT -->
+      <div class="tab-content hidden" id="tab-contact">
+        <div class="panel contact-panel">
+          <div class="panel-h"><span class="glow" data-i18n="contact">Contact Me</span></div>
+          <p class="contact-sub" data-i18n="contactSub">برای پشتیبانی و همکاری با من در ارتباط باشید</p>
+          <div class="contact-bubbles">
+            <a class="contact-bubble tg" href="https://t.me/lowkey878" target="_blank" rel="noopener" title="Telegram"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg></a>
+          </div>
+        </div>
+      </div>
+
+      <!-- XRAY CORE -->
+      <div class="tab-content hidden" id="tab-xray">
+        <div class="panel">
+          <div class="panel-h" style="display:flex;align-items:center;justify-content:space-between">
+            <span class="glow">⚡ Xray-core Engine</span>
+            <div style="display:flex;align-items:center;gap:8px">
+              <button class="btn-glass" type="button" onclick="loadXrayStatus()" title="بروزرسانی وضعیت"><span class="material-symbols-outlined" style="font-size:16px;vertical-align:middle">sync</span> بروزرسانی</button>
+              <span id="xray-status-badge" class="badge badge-b">OFFLINE</span>
+            </div>
+          </div>
+          <div class="px-hint">مدیریت وضعیت هسته Xray، مشاهده نسخه، اجرای دستورات کنترلی و مانیتورینگ زنده لاگ‌ها.</div>
+
+          <div class="bot-status-grid" style="margin:16px 0">
+            <div class="bot-status-card"><span>وضعیت هسته</span><b id="xray-status-text">—</b></div>
+            <div class="bot-status-card"><span>نسخه هسته</span><b id="xray-version-text" dir="ltr" style="font-size:12px">—</b></div>
+            <div class="bot-status-card"><span>مدت زمان اجرا</span><b id="xray-uptime-text" dir="ltr">—</b></div>
+            <div class="bot-status-card"><span>اینباندهای فعال Xray</span><b id="xray-inbounds-text">0</b></div>
+            <div class="bot-status-card"><span>سیستم عامل / معماری</span><b id="xray-arch-text" dir="ltr" style="font-size:11px">—</b></div>
+          </div>
+
+          <div style="display:flex;gap:10px;flex-wrap:wrap;margin:16px 0">
+            <button class="btn btn-p" type="button" onclick="xrayStart()" id="btn-xray-start">
+              <span class="material-symbols-outlined" style="font-size:16px;vertical-align:middle">play_arrow</span> روشن کردن
+            </button>
+            <button class="btn btn-g" type="button" onclick="xrayStop()" id="btn-xray-stop" style="color:var(--red)">
+              <span class="material-symbols-outlined" style="font-size:16px;vertical-align:middle">stop</span> خاموش کردن
+            </button>
+            <button class="btn btn-b" type="button" onclick="xrayRestart()">
+              <span class="material-symbols-outlined" style="font-size:16px;vertical-align:middle">refresh</span> راه‌اندازی مجدد (Restart)
+            </button>
+            <button class="btn btn-g" type="button" onclick="xrayUpdateCore()" style="border-color:var(--neon);color:var(--neon)">
+              <span class="material-symbols-outlined" style="font-size:16px;vertical-align:middle">download</span> بروزرسانی هسته (Update)
+            </button>
+          </div>
+
+          <div class="divider"></div>
+
+          <div style="display:flex;align-items:center;justify-content:space-between;margin:12px 0 8px">
+            <label style="font-size:13px;font-weight:700;color:var(--txt)">📜 لاگ‌های زنده هسته Xray</label>
+            <div style="display:flex;gap:6px">
+              <button class="btn-glass" type="button" onclick="loadXrayLogs()">تازه‌سازی</button>
+              <button class="btn-glass" type="button" onclick="clearXrayLogs()">پاک کردن لاگ</button>
+            </div>
+          </div>
+          <pre id="xray-logs-viewer" dir="ltr" style="background:#0c1017;color:#38ef7d;border:1px solid var(--border);border-radius:10px;padding:12px;font-family:monospace;font-size:11px;min-height:220px;max-height:450px;overflow-y:auto;white-space:pre-wrap;word-break:break-all"></pre>
+        </div>
+      </div>
+
+      <!-- ADVANCED -->
+      <div class="tab-content hidden" id="tab-advanced">
+        <div class="panel">
+          <div class="panel-h"><span class="glow" data-i18n="tab.advanced">پیشرفته</span></div>
+          <div class="px-hint" data-i18n="advancedInboundHint">یک اینباند را انتخاب کنید و JSON کامل آن را ویرایش کنید. تغییرات ذخیره و برای سرویس اعمال می‌شوند.</div>
+          <div id="advanced-inbound-list" class="adv-inbound-grid" style="margin:12px 0"></div>
+          <div id="advanced-editor-wrap" class="hidden">
+            <div class="f-g"><label data-i18n="advancedJson">JSON اینباند</label><textarea id="advanced-inbound-json" dir="ltr" rows="14" style="font-family:monospace;direction:ltr;text-align:left;min-height:240px"></textarea></div>
+            <button class="btn btn-p" type="button" id="advanced-save-btn" onclick="saveAdvancedInbound()" data-i18n="advancedSave">ذخیره JSON</button>
+          </div>
+          <div class="spd-acc-list" style="margin-top:14px">
+            <div class="spd-acc">
+              <button type="button" class="spd-acc-head" onclick="spdToggleAcc('help-logs',this);helpLogsToggled()" aria-expanded="false"><span class="spd-acc-title"><strong data-i18n="helpLogs">لاگ پنل</strong><span class="badge" id="hl-count" style="margin-right:6px"></span></span><span class="material-symbols-outlined spd-acc-arrow">expand_more</span></button>
+              <div class="spd-acc-body" id="acc-help-logs">
+                <div class="px-hint" data-i18n="helpLogsHint">لاگ کامل پنل: اتصال کاربران، ورود و خروج، ساخت/ویرایش/حذف رکوردها و همه خطاها. با فیلتر و جست‌وجو مرور کنید.</div>
+                <div class="hl-controls">
+                  <input id="hl-q" type="search" data-i18n-placeholder="helpLogsSearch" placeholder="جست‌وجو در لاگ…" oninput="helpLogsDebounced()">
+                  <select id="hl-kind" onchange="loadHelpLogs()" dir="ltr"></select>
+                  <select id="hl-level" onchange="loadHelpLogs()" dir="ltr">
+                    <option value="" data-i18n="helpLogsAllLevels">همه سطح‌ها</option>
+                    <option value="info">info</option><option value="ok">ok</option><option value="warn">warn</option><option value="err">err</option>
+                  </select>
+                  <button class="btn btn-g btn-sm" type="button" onclick="loadHelpLogs()"><span class="material-symbols-outlined" style="font-size:15px">refresh</span></button>
+                </div>
+                <div class="hl-stats" id="hl-stats"></div>
+                <div class="hl-list" id="hl-list"><div class="hl-empty" data-i18n="helpLogsEmpty">در حال بارگذاری…</div></div>
+              </div>
+            </div>
+            <div class="spd-acc">
+              <button type="button" class="spd-acc-head" onclick="spdToggleAcc('help-server-edit',this)" aria-expanded="false"><span class="spd-acc-title"><strong data-i18n="helpServerEdit">Server Edit</strong></span><span class="material-symbols-outlined spd-acc-arrow">expand_more</span></button>
+              <div class="spd-acc-body" id="acc-help-server-edit">
+                <div class="px-hint" data-i18n="helpServerEditHint">آدرس اتصال کانفیگ‌های پیش‌فرض TLS + WS را تغییر دهید. Host و SNI دامنه پنل باقی می‌مانند.</div>
+                <div style="display:flex;gap:8px;flex-wrap:wrap;margin:10px 0">
+                  <button class="btn btn-g" type="button" onclick="saveHelpAddress('chatgpt')" data-i18n="helpChatgptAddress">قرار دادن chatgpt.com در Address</button>
+                  <button class="btn btn-g" type="button" onclick="saveHelpAddress('panel_ipv6')" data-i18n="helpPanelIpv6">استفاده از IPv6 دامنه پنل</button>
+                  <button class="btn btn-g" type="button" onclick="saveHelpAddress('panel')" data-i18n="helpResetAddress">استفاده از دامنه پنل</button>
+                </div>
+                <div class="f-g"><label for="help-custom-address" data-i18n="helpAddressLabel">Custom Address</label><div style="display:flex;gap:8px"><input id="help-custom-address" type="text" dir="ltr" data-i18n-placeholder="helpAddressPlaceholder" placeholder="دامنه یا IP (IPv4/IPv6)" style="flex:1"><button class="btn btn-p" type="button" onclick="saveHelpAddress('custom')" data-i18n="helpCustomAddress">ذخیره آدرس سفارشی</button></div></div>
+              </div>
+            </div>
+            <div class="spd-acc">
+              <button type="button" class="spd-acc-head" onclick="spdToggleAcc('help-config-options',this)" aria-expanded="false"><span class="spd-acc-title"><strong data-i18n="helpConfigOptions">تنظیمات کانفیگ</strong></span><span class="material-symbols-outlined spd-acc-arrow">expand_more</span></button>
+              <div class="spd-acc-body" id="acc-help-config-options">
+                <div class="px-hint" data-i18n="helpFeatureHint">این گزینه‌ها فقط به کانفیگ‌های اینباند پیش‌فرض TLS + WS افزوده می‌شوند.</div>
+                <div class="help-ech-row" style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)">
+                  <div style="flex:1;min-width:0"><strong data-i18n="helpEch">افزودن ECH</strong><div class="px-hint" data-i18n="helpEchHint">پارامتر ECH را به کانفیگ‌های TLS + WS پیش‌فرض اضافه می‌کند.</div></div>
+                  <div class="help-ech-actions">
+                    <button type="button" class="btn btn-g btn-sm help-ech-picker-btn" onclick="openEchPresetPicker()" aria-haspopup="dialog" aria-controls="mod-ech-picker"><span data-i18n="helpEchChoose">انتخاب ECH</span><span class="help-ech-current" id="help-ech-preset-label">CF Config</span><span class="material-symbols-outlined" style="font-size:16px">expand_more</span></button>
+                    <button type="button" class="ios-switch" id="help-ech-switch" role="switch" aria-checked="false" onclick="toggleHelpFeature('ech',this)"></button>
+                  </div>
+                </div>
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)"><div><strong data-i18n="helpFf">افزودن F+F</strong><div class="px-hint" data-i18n="helpFfHint">مجموعه cipher و تنظیمات fragment نمونه را به کانفیگ‌های TLS + WS پیش‌فرض اضافه می‌کند.</div></div><button type="button" class="ios-switch" id="help-ff-switch" role="switch" aria-checked="false" onclick="toggleHelpFeature('ff',this)"></button></div>
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0">
+                  <div style="flex:1;min-width:0">
+                    <strong data-i18n="helpSpoof">Spoof</strong>
+                    <div class="px-hint" data-i18n="helpSpoofHint">پارامتر snispoofing را به کانفیگ‌های TLS + WS پیش‌فرض اضافه می‌کند.</div>
+                    <div class="f-r" style="gap:8px;margin-top:8px">
+                      <div class="f-g" style="margin:0"><label data-i18n="helpSpoofSni">SNI جعلی</label><input id="help-spoof-sni" type="text" dir="ltr" placeholder="chatgpt.com" onchange="saveHelpSpoofFields()"></div>
+                      <div class="f-g" style="margin:0"><label data-i18n="helpSpoofIp">IP مقصد</label><input id="help-spoof-ip" type="text" dir="ltr" placeholder="1.2.3.4" onchange="saveHelpSpoofFields()"></div>
+                    </div>
+                  </div>
+                  <button type="button" class="ios-switch" id="help-spoof-switch" role="switch" aria-checked="false" onclick="toggleHelpFeature('spoof',this)"></button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- VERCEL DOMAIN -->
+      
+      <div class="tab-content hidden" id="tab-vercel-domain">
+        <div class="panel">
+          <div class="panel-h" style="justify-content:space-between;gap:12px;flex-wrap:wrap"><span class="glow" data-i18n="vercelDomain.title">Vercel Domain</span><span id="vd-badge" class="badge badge-b" data-i18n="disconnected">قطع</span></div>
+          <div class="px-hint" data-i18n="vercelDomain.intro">Connect the Railway panel domain to a Vercel WebSocket relay. Client links use TLS + WebSocket at /ws/vl/uuid; ping runs from this browser.</div>
+          <div id="vd-setup" style="margin-top:12px">
+            <div class="f-g">
+              <label data-i18n="vercelDomain.token">Vercel API Token</label>
+              <div style="display:flex;gap:8px;flex-wrap:wrap">
+                <input id="vd-token" type="password" dir="ltr" autocomplete="off" placeholder="vercel_…" style="flex:1;min-width:190px">
+                <a class="btn btn-g btn-sm" href="https://vercel.com/account/tokens" target="_blank" rel="noopener" style="text-decoration:none;white-space:nowrap"><span data-i18n="vercelDomain.getToken">Get token</span></a>
+              </div>
+            </div>
+            <div class="px-hint" data-i18n="vercelDomain.tokenHint">The token is kept on the panel server and is never returned to your browser.</div>
+            <div class="vd-actions">
+              <button id="vd-deploy-btn" type="button" class="btn btn-p" onclick="deployVercelDomain()"><span class="material-symbols-outlined" style="font-size:16px">rocket_launch</span><span data-i18n="vercelDomain.create">Create Vercel Domain</span></button>
+              <button type="button" class="btn btn-g btn-sm" onclick="loadVercelDomain()"><span class="material-symbols-outlined" style="font-size:15px">refresh</span><span data-i18n="vercelDomain.refresh">Refresh</span></button>
+            </div>
+          </div>
+          <div id="vd-managed" class="hidden" style="margin-top:12px">
+            <div class="set-row"><span class="set-lbl" data-i18n="vercelDomain.panelDomain">Railway panel domain</span><span id="vd-panel-domain" dir="ltr" style="font:12px monospace;word-break:break-all;color:var(--txt)">—</span></div>
+            <div class="set-row"><span class="set-lbl" data-i18n="vercelDomain.domain">Vercel domain</span><a id="vd-domain" href="#" target="_blank" rel="noopener" dir="ltr" class="vd-domain">—</a></div>
+            <div class="set-row"><span class="set-lbl" data-i18n="vercelDomain.project">Project</span><span id="vd-project" dir="ltr" style="font:12px monospace;color:var(--txt)">—</span></div>
+            <div class="vd-actions">
+              <button id="vd-ping-btn" type="button" class="btn btn-p" onclick="pingVercelDomain()"><span class="material-symbols-outlined" style="font-size:16px">network_ping</span><span data-i18n="vercelDomain.ping">Ping from my internet</span></button>
+              <button type="button" class="btn btn-g btn-sm" onclick="loadVercelDomain()"><span class="material-symbols-outlined" style="font-size:15px">refresh</span><span data-i18n="vercelDomain.refresh">Refresh</span></button>
+              <button type="button" class="btn btn-r btn-sm" onclick="deleteVercelDomain()"><span class="material-symbols-outlined" style="font-size:15px">delete</span><span data-i18n="vercelDomain.delete">Delete Vercel Domain</span></button>
+            </div>
+            <div class="vd-status" id="vd-ping-result" role="status" aria-live="polite"></div>
+            <div class="panel-h" style="margin-top:18px;border-top:1px solid var(--border);padding-top:14px;justify-content:space-between;gap:8px;flex-wrap:wrap"><span class="glow" data-i18n="vercelDomain.configTitle">Vercel WebSocket configuration</span><span id="vd-config-count" class="badge badge-g">0</span></div>
+            <div class="px-hint" data-i18n="vercelDomain.configHint">Choose a user to show that user's VLESS + TLS/WS link on /ws/vl/uuid through the Vercel domain. The normal panel config remains unchanged.</div>
+            <div class="f-g" style="margin-top:10px"><label data-i18n="vercelDomain.user">User</label><select id="vd-user-select" onchange="selectVercelConfig()" style="width:100%"></select></div>
+            <div id="vd-config-empty" class="px-hint hidden" data-i18n="vercelDomain.noUsers">No valid user configurations found yet.</div>
+            <textarea class="vd-code" id="vd-config-output" readonly spellcheck="false" placeholder="vless://..." aria-label="Vercel WebSocket config"></textarea>
+            <div class="vd-actions"><button type="button" class="btn btn-p" onclick="copyVercelConfig()"><span class="material-symbols-outlined" style="font-size:16px">content_copy</span><span data-i18n="vercelDomain.copyConfig">Copy configuration</span></button></div>
+          </div>
+          <div id="vd-message" class="vd-status" role="status" aria-live="polite"></div>
+        </div>
+      </div>
+
+      <!-- HELP -->
+      
+      <div class="tab-content hidden" id="tab-help">
+        <div class="panel">
+          <div class="panel-h"><span class="glow" data-i18n="tab.help">راهنما</span></div>
+          <div class="px-hint" data-i18n="helpIntro">راهنما و تنظیمات کانفیگ‌های پیش‌فرض</div>
+          <div class="spd-acc-list" style="margin-top:12px">
+            <div class="spd-acc">
+              <button type="button" class="spd-acc-head" onclick="spdToggleAcc('help-template',this)" aria-expanded="false"><span class="spd-acc-title"><strong data-i18n="helpTemplate">Template</strong></span><span class="material-symbols-outlined spd-acc-arrow">expand_more</span></button>
+              <div class="spd-acc-body" id="acc-help-template">
+                <div class="px-hint" data-i18n="helpPromptHint">این Prompt منطق صفحه ساب فعلی را توضیح می‌دهد تا بتوانید آن را به هوش مصنوعی بدهید.</div>
+                <textarea id="help-template-text" readonly dir="ltr" spellcheck="false" style="width:100%;min-height:360px;margin:10px 0;padding:12px;border:1px solid var(--border);border-radius:10px;background:var(--bg2);color:var(--txt);font:12px/1.6 monospace;white-space:pre-wrap;user-select:text;-webkit-user-select:text">You are modifying Lk panel's user subscription page, static/sub.html. First inspect the existing page and its server-side data contract. Preserve the established behavior unless the requested change requires otherwise.
+
+PAGE AND DATA CONTRACT
+- The page is served for a user's subscription UUID and reads the final path segment as uname. It fetches GET /api/sub/{encodeURIComponent(uname)} with cache: no-store.
+- The API returns subscription data including config_uuid, username, status/is_active, configs (and a legacy single config), traffic_used_bytes, traffic_limit_bytes, max_ip_per_user, used_ips, expire_days, expire_at_ts. Treat absent optional fields safely.
+- Build the public subscription URL as window.location.origin + '/link/' + config_uuid. This is the import URL copied by the page and used by quick-connect apps.
+- The API can return a status/telemetry line in configs. Do not show entries containing the encoded 📊 marker %F0%9F%93%8A. If configs is empty, use the single config field when present.
+- Keep config strings byte-for-byte intact for copy and QR actions. Decode only the URI fragment to create the display name; do not rebuild a VLESS URI in the browser.
+- Per-config QR images come from GET /api/sub/{uuid}/qr?cfg={zero-based-config-index}. The server maps that index to the same filtered list of real configs. The QR must encode the configuration, not the subscription URL.
+
+PAGE BEHAVIOR
+- applyData populates the subscription URL and ID, active/inactive status, username, used/total/remaining traffic, usage percentage ring and bar, current/allowed connections, and remaining expiry in days, hours, and minutes. A zero traffic limit means unlimited; a missing expiry means no expiry.
+- renderConfigs groups links into TLS, Reality, and Telegram Proxy. Identify categories from the URI: Telegram proxy links begin with t.me/proxy or tg://proxy; Reality links contain security=reality; other configs belong to TLS. Translate category labels with the page's fa/en dictionaries.
+- Each config card shows its decoded remark and protocol and has copy and QR actions. Escape remarks before inserting them into HTML. Never insert server text as trusted markup.
+- The chips filter all/TLS/Reality/Telegram groups. Search filters by the decoded config name within the active category. Update group visibility and visible counts after either action.
+- Copy Subscription Link, Copy Sub Text, Copy All Configs, and per-config Copy use the Clipboard API with the existing textarea fallback. Keep localized success/error toast messages.
+- Quick Connect opens a modal with Android, iOS, and Windows choices. Existing app deep links are: Happ happ://add/{encoded-sub-url}; v2rayNG v2rayng://install-sub?url={encoded-sub-url}&name=LK; V2Box v2box://install-sub?url={encoded-sub-url}&name=LK; Hiddify hiddify://install-sub?url={encoded-sub-url}&name=LK; Windows v2rayN v2rayn://install-sub?url={encoded-sub-url}. Copy the subscription URL before redirecting to the chosen client.
+- The QR modal requests the server image for the selected real config index, shows its decoded name, and can close from its button. Quick Connect closes from its close button, backdrop, or chosen action.
+- Keep event binding idempotent: dynamically rendered cards are recreated, so do not attach duplicate handlers. Existing code uses a _bound marker for this.
+
+LANGUAGE, THEME, AND LAYOUT
+- Language is shared with the main panel through localStorage key white-lang (fa or en). Every human-readable UI string, including dynamically-created buttons, empty states, titles, toasts, and errors, needs both Persian and English dictionary entries. applyLang must update text, placeholders, direction, and the visible language button.
+- Theme is shared through white-theme (dark or light) and data-theme on the root. Use the existing CSS variables for both themes; do not hard-code colors that break the light theme.
+- Preserve responsive mobile layout, RTL for Persian and LTR for English, accessible button types/labels, safe-area spacing, and reduced overflow on narrow screens. Keep selection disabled for decorative text only; inputs and the copyable subscription URL must remain selectable.
+- Keep the existing content structure and page identity. Do not copy the admin dashboard, expose private account fields, or mix this user page with the separate public group page at /p/{uuid_key}.
+
+IMPLEMENTATION RULES
+- Before coding, trace the matching API response in main.py and inspect current IDs/classes in sub.html. Do not assume a field or endpoint that the repository does not provide.
+- Make the smallest coherent HTML/CSS/JavaScript change, keep browser code compatible with the project's current style, and escape any API-derived text.
+- If a requested UI behavior needs new server data, describe and implement the API contract in main.py too; never silently depend on a field that the endpoint does not return.
+- Preserve existing client deep links, telemetry filtering, account calculations, QR index mapping, and copy semantics while editing. Return a concise summary of files changed and any behavior that cannot be guaranteed by the current server contract.</textarea>
+                <button class="btn btn-p" type="button" onclick="copyHelpPrompt()"><span data-i18n="helpCopyPrompt">کپی Prompt</span></button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- NOTIFICATIONS -->
+      <div class="tab-content hidden" id="tab-notif">
+        <div class="panel">
+          <div class="panel-h">
+            <span class="glow" data-i18n="notif.title">اعلان‌ها</span>
+            <span style="font-size:10px;color:var(--txt2)" id="notif-source"></span>
+            <button class="btn btn-g btn-sm" type="button" style="margin-right:auto" onclick="loadNotifs(true)"><span data-i18n="notif.refresh">بروزرسانی</span></button>
+          </div>
+          <div class="px-hint" data-i18n="notif.hint">هر اعلان یک آکاردیون است؛ با زدن روی موضوع، متن کامل به همراه تاریخ و ساعت نمایش داده می‌شود.</div>
+          <div id="notif-list" class="spd-acc-list" style="margin-top:12px"><div class="empty" data-i18n="notif.loading">در حال دریافت اعلان‌ها...</div></div>
+        </div>
+      </div>
+
+    </div><!-- /content -->
+  </div><!-- /main-area -->
+</div><!-- /app-wrap -->
+
+<!-- MODALS -->
+<div class="modal" id="mod-user"><div class="modal-c" style="max-width:680px">
+  <div class="modal-t"><span class="glow" data-i18n="createUser">ایجاد کاربر جدید</span></div>
+  <form onsubmit="submitCreateUser(event)">
+    <div class="f-r">
+      <div class="f-g"><label data-i18n="username">نام کاربری</label><input type="text" id="cu-name" placeholder="خالی = تصادفی"></div>
+      <div class="f-g"><label data-i18n="conn">اتصال همزمان</label><input type="number" id="cu-conn" placeholder="∞ نامحدود"></div>
+      <div class="f-g speed-limit-field"><label data-i18n="speedLimit">محدودیت سرعت (Mbps)</label><input type="number" id="cu-speed" min="0" step="0.1" value="0"><div class="px-hint" data-i18n="speedLimitHint">سقف مجموع سرعت اتصال‌های رله‌شده WebSocket/XHTTP؛ صفر یعنی نامحدود.</div></div>
+    </div>
+    <div class="f-r">
+      <div class="f-g"><label data-i18n="volume">حجم</label><input type="number" id="cu-vol" placeholder="∞ نامحدود"></div>
+      <div class="f-g"><label data-i18n="unit">واحد</label><select id="cu-vol-u"><option value="GB">GB</option><option value="MB">MB</option></select></div>
+      <div class="f-g"><label data-i18n="expire">اعتبار</label><input type="number" id="cu-exp" placeholder="∞ نامحدود"></div>
+      <div class="f-g"><label data-i18n="unit">واحد</label><select id="cu-exp-u"><option value="days" data-i18n="day">روز</option><option value="months" data-i18n="month">ماه</option></select></div>
+    </div>
+    <div class="f-g">
+      <label data-i18n="inboundsMulti">اینباندها (چندتایی)</label>
+      <div class="px-hint" data-i18n="inboundPickHint">برای هر اینباند، گزینه‌های مخصوصش نمایش داده می‌شود: Worker → انتخاب کشور؛ VLESS غیرپیش‌فرض → Cloudflare و Railway؛ Reality → بدون گزینه.</div>
+      <div id="cu-inbound" class="f-r" style="gap:8px;margin-top:6px"></div>
+    </div>
+    <div class="modal-btns">
+      <button type="button" class="btn btn-g" onclick="closeModal('mod-user')"><span data-i18n="cancel">انصراف</span></button>
+      <button type="submit" class="btn btn-p" id="cu-submit"><span data-i18n="submitUser">ایجاد کاربر</span></button>
+    </div>
+  </form>
+</div></div>
+
+<div class="modal" id="mod-edit-user"><div class="modal-c">
+  <div class="modal-t"><span class="glow" data-i18n="editUser">ویرایش کاربر</span></div>
+  <form onsubmit="submitEditUser(event)">
+    <input type="hidden" id="eu-id">
+    <div class="f-g"><label data-i18n="username">نام کاربری</label><input type="text" id="eu-name" required></div>
+    <div class="f-g"><label data-i18n="volEdit">حجم (GB - ۰=نامحدود)</label><input type="number" id="eu-vol" value="20"></div>
+    <div class="f-g"><label data-i18n="daysEdit">روز اعتبار (۰=نامحدود)</label><input type="number" id="eu-exp" value="30"></div>
+    <div class="f-g"><label data-i18n="conn">اتصال همزمان</label><input type="number" id="eu-conn" value="0" placeholder="۰=نامحدود"></div>
+    <div class="f-g speed-limit-field"><label data-i18n="speedLimit">محدودیت سرعت (Mbps)</label><input type="number" id="eu-speed" min="0" step="0.1" value="0"><div class="px-hint" data-i18n="speedLimitHint">سقف مجموع سرعت اتصال‌های رله‌شده WebSocket/XHTTP؛ صفر یعنی نامحدود.</div></div>
+    <div class="f-g"><label data-i18n="status">وضعیت</label><select id="eu-status"><option value="active" data-i18n="active">فعال</option><option value="inactive" data-i18n="inactive">غیرفعال</option></select></div>
+    <div class="f-g" style="display:flex;align-items:center;gap:8px"><input type="checkbox" id="eu-reset" style="width:auto"><label style="margin:0" data-i18n="resetTraffic">بازنشانی ترافیک</label></div>
+    <div class="f-g">
+      <label data-i18n="inboundsMulti">اینباندها (چندتایی)</label>
+      <div class="px-hint" data-i18n="inboundPickHint">برای هر اینباند، گزینه‌های مخصوصش نمایش داده می‌شود: Worker → انتخاب کشور؛ VLESS غیرپیش‌فرض → Cloudflare و Railway؛ Reality → بدون گزینه.</div>
+      <div id="eu-inbound" class="f-r" style="gap:8px;margin-top:6px"></div>
+    </div>
+    <div class="modal-btns">
+      <button type="button" class="btn btn-g" onclick="closeModal('mod-edit-user')"><span data-i18n="cancel">انصراف</span></button>
+      <button type="submit" class="btn btn-p"><span data-i18n="saveChanges">ذخیره تغییرات</span></button>
+    </div>
+  </form>
+</div></div>
+
+<div class="modal" id="mod-inbound"><div class="modal-c" style="max-width:560px">
+  <div class="modal-t"><span class="glow" id="ib-title">ایجاد اینباند جدید</span></div>
+  <form onsubmit="submitInbound(event)">
+    <input type="hidden" id="ib-id">
+    <div class="f-g"><label data-i18n="inboundName">نام اینباند</label><input type="text" id="ib-name" data-i18n-placeholder="inboundName" placeholder="خالی = تصادفی"></div>
+    <div class="f-r"><div class="f-g"><label data-i18n="inboundType">Inbound Type</label><select id="ib-inbound-type" onchange="onInboundTypeChange()"><option value="config">Config</option><option value="telegram">Telegram Proxy</option></select></div></div>
+    <div class="f-g" id="ib-internal-port-wrap"><label>Internal Port (پورت داخلی)</label><input type="number" id="ib-port" value="443" min="1" max="65535" dir="ltr" placeholder="443"><div class="px-hint" style="font-size:10px">این پورت پورت واقعی Listen سرور است.</div></div>
+    <div id="ib-tls-fields">
+      <div class="f-g"><label data-i18n="securityType">امنیت</label><select id="ib-security" onchange="onSecurityChange()"><option value="tls">TLS</option><option value="reality">Reality</option></select></div>
+      <div style="font-size:10px;color:var(--txt2);margin-bottom:10px">پروتکل اینباند VLESS است؛ تنها امنیت را انتخاب کنید (TLS یا Reality).</div>
+      <div id="ib-external-address-fields" class="hidden">
+        <div class="f-g"><label data-i18n="extDomain">دامنه خارجی (در آدرس کانفیگ)</label><input type="text" id="ib-extdomain" dir="ltr" data-i18n-placeholder="extDomainPlace" placeholder="مثال: tokaido.proxy.rlwy.net"></div>
+        <div class="f-g"><label data-i18n="extPortCfg">پورت خارجی (در آدرس کانفیگ)</label><input type="number" id="ib-extport" value="443" dir="ltr" placeholder="443"></div>
+      </div>
+    </div>
+    <div id="ib-reality-fields" class="hidden">
+      <div class="divider"></div>
+      <div style="font-size:11px;color:var(--neon);font-weight:700;margin-bottom:8px" data-i18n="realitySettings">تنظیمات Reality</div>
+      <div class="f-g"><label>SNI (Server Name / Destination)</label>
+        <div style="display:flex;gap:6px;align-items:flex-end">
+          <input type="text" id="ib-sni" value="" dir="ltr" placeholder="مثلاً www.google.com" style="flex:1">
+          <button type="button" class="btn btn-sm btn-b" onclick="snPickFastest()" title="سریع‌ترین SNI از sni_reality.txt" style="border-radius:50%;width:36px;height:36px;display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></button>
+        </div>
+      </div>
+      <div class="f-r">
+        <div class="f-g"><label>Private Key (x25519)</label><input type="text" id="ib-privkey" dir="ltr" data-i18n-placeholder="autoGen" placeholder="تولید خودکار"></div>
+        <div class="f-g"><label>Public Key</label><input type="text" id="ib-pubkey" dir="ltr" data-i18n-placeholder="autoGen" placeholder="تولید خودکار" readonly></div>
+      </div>
+      <button type="button" class="btn btn-sm btn-b" onclick="generateRealityKeysUI()" style="width:100%;margin-bottom:10px"><span data-i18n="genRealityKey">تولید کلید Reality (x25519)</span></button>
+      <div class="f-g"><label data-i18n="shortIds">Short IDs</label><div style="display:flex;gap:6px"><input type="text" id="ib-shortids" value="" dir="ltr" data-i18n-placeholder="hex8" placeholder="هگز ۸ رقمی — خالی = تصادفی" style="flex:1"><button type="button" class="btn btn-sm" onclick="generateShortId()" style="white-space:nowrap"><span data-i18n="generate">+ تولید</span></button></div></div>
+      <div class="f-g"><label data-i18n="whitex">WhiteX</label><input type="text" id="ib-whitex" dir="ltr" placeholder="/" value="/"></div>
+    </div>
+    <div id="ib-tg-fields" class="hidden">
+      <div class="divider"></div>
+      <div style="font-size:11px;color:var(--neon);font-weight:700;margin-bottom:8px">Telegram Proxy Settings</div>
+      <div class="f-r">
+        <div class="f-g"><label>Internal Port</label><input type="number" id="ib-tg-intport" value="44344" dir="ltr" placeholder="44344"></div>
+        <div class="f-g"><label>External Port</label><input type="number" id="ib-tg-extport" value="443" dir="ltr" placeholder="443"></div>
+      </div>
+      <div class="f-g"><label>External Domain</label><input type="text" id="ib-tg-domain" dir="ltr" placeholder="proxy.example.com"></div>
+      <div id="ib-tg-railway-info" class="px-hint" style="margin-top:-4px">External Domain/Port entered for this Telegram inbound are authoritative. Railway TCP values are shown only as advisory.</div>
+    </div>
+    <div class="divider"></div>
+    <div id="ib-net-wrap">
+      <div class="f-g"><label data-i18n="network">نوع انتقال (Transport)</label><select id="ib-network" onchange="onNetworkChange()"><option value="tcp">TCP</option><option value="ws">WebSocket</option><option value="xhttp">XHTTP</option><option value="grpc">gRPC</option></select></div>
+      <div id="ib-ws-fields" class="hidden"><div class="f-g"><label>Path</label><input type="text" id="ib-wspath" value="/" dir="ltr"></div></div>
+      <div id="ib-xhttp-fields" class="hidden">
+        <div class="f-g"><label>Path</label><input type="text" id="ib-xhttppath" value="/" dir="ltr"></div>
+        <div class="f-r"><div class="f-g"><label>Mode</label><select id="ib-xhttp-mode"><option value="auto">auto</option><option value="packet-up">packet-up</option><option value="stream-one">stream-one</option></select></div></div>
+      </div>
+      <div id="ib-grpc-fields" class="hidden"><div class="f-g"><label data-i18n="serviceName">Service Name</label><input type="text" id="ib-grpc-svc" value="grpc" dir="ltr"></div></div>
+    </div>
+    <div class="divider"></div>
+    <div style="font-size:11px;color:var(--neon);font-weight:700;margin-bottom:8px">تنظیمات پیشرفته کانفیگ</div>
+    <div class="f-g"><label>پیشوند نام کانفیگ</label><input type="text" id="ib-nameprefix" dir="ltr" placeholder="Lk-"><div class="px-hint" style="font-size:10px">خالی = استفاده از پیشوند عمومی تنظیمات.</div></div>
+    <div class="f-r">
+      <div class="f-g"><label>Fingerprint</label><input type="text" id="ib-fingerprint" dir="ltr" placeholder="chrome"></div>
+      <div class="f-g"><label>ALPN</label><input type="text" id="ib-alpn" dir="ltr" placeholder="h2,http/1.1"></div>
+    </div>
+    <div class="f-r">
+      <div class="f-g"><label>Host</label><input type="text" id="ib-host" dir="ltr" placeholder="خالی = دامنه"></div>
+      <div class="f-g"><label>Flow</label><input type="text" id="ib-flow" dir="ltr" placeholder="xtls-rprx-vision"></div>
+    </div>
+    <div class="f-g"><label>Packet Encoding</label><input type="text" id="ib-packetencoding" dir="ltr" placeholder="xudp"></div>
+    <label style="display:flex;align-items:center;gap:8px;margin:8px 0"><input type="checkbox" id="ib-allowinsecure"> Allow Insecure</label>
+    <div class="f-g"><label>Advanced Settings (JSON)</label><textarea id="ib-advanced" dir="ltr" rows="4" placeholder='{"fp":"chrome","alpn":"h2,http/1.1"}' style="font-family:monospace;direction:ltr;text-align:left"></textarea><div class="px-hint" style="font-size:10px">هر پارامتر اضافی کانفیگ (sni، fp، alpn، path، host، ...) را اینجا اضافه یا بازنویسی کنید.</div></div>
+    <div class="modal-btns">
+      <button type="button" class="btn btn-g" onclick="closeModal('mod-inbound')"><span data-i18n="cancel">انصراف</span></button>
+      <button type="submit" class="btn btn-p" id="ib-submit"><span data-i18n="createInbound">ایجاد اینباند</span></button>
+    </div>
+  </form>
+</div></div>
+
+<div class="modal" id="mod-cfg"><div class="modal-c">
+  <div class="modal-t"><span class="glow" data-i18n="config">کانفیگ</span></div>
+  <pre class="cfg-code" id="cfg-code"></pre>
+  <div class="modal-btns">
+    <button type="button" class="btn btn-g cfg-copy-btn" onclick="copyCfg()" title="کپی همه کانفیگ‌ها" aria-label="کپی همه کانفیگ‌ها"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></button>
+    <button class="btn btn-g" onclick="closeModal('mod-cfg')"><span data-i18n="close">بستن</span></button>
+  </div>
+</div></div>
+
+<div class="modal" id="mod-tm-server"><div class="modal-c" style="max-width:440px">
+  <div class="modal-t"><span class="glow" id="tm-server-modal-title" data-i18n="tm.addServerTitle">Add TM server</span></div>
+  <form onsubmit="tmSubmitServer(event)">
+    <div class="f-g"><label data-i18n="tm.serverName">Display name</label><input type="text" id="tm-srv-name" dir="ltr" autocomplete="off" placeholder="Germany 1"></div>
+    <div class="f-g"><label data-i18n="tm.serverDomain">Server panel domain</label><input type="text" id="tm-srv-domain" dir="ltr" autocomplete="off" required placeholder="vpn.example.com"></div>
+    <div class="f-g"><label data-i18n="tm.spiKey">API key (server)</label><input type="password" id="tm-srv-key" dir="ltr" autocomplete="new-password" placeholder="spdr_xxxxxxxxx"></div>
+    <div class="px-hint" id="tm-srv-key-hint" data-i18n="tm.keyHint">When editing, leave the key empty to keep the stored one.</div>
+    <div class="modal-btns">
+      <button type="button" class="btn btn-g" onclick="closeModal('mod-tm-server')"><span data-i18n="cancel">Cancel</span></button>
+      <button type="submit" class="btn btn-p" id="tm-srv-submit"><span data-i18n="saveChanges">Save</span></button>
+    </div>
+  </form>
+</div></div>
+
+
+
+<div class="modal" id="mod-ech-picker" role="dialog" aria-modal="true" aria-labelledby="ech-picker-title" onclick="if(event.target===this)closeModal('mod-ech-picker')">
+  <div class="modal-c ech-picker-modal" style="max-width:500px">
+    <button type="button" class="modal-x" onclick="closeModal('mod-ech-picker')" aria-label="Close">×</button>
+    <div class="modal-t"><span class="glow" id="ech-picker-title" data-i18n="helpEchPickerTitle">ECH List</span></div>
+    <div class="px-hint" data-i18n="helpEchPickerHint" style="margin:-8px 0 14px">یک مقدار را انتخاب کنید؛ با فعال کردن ECH همین مقدار در کانفیگ‌ها استفاده می‌شود.</div>
+    <div class="ech-preset-list">
+      <button type="button" class="ech-preset-option" data-ech-preset="cf-config" onclick="selectEchPreset('cf-config')"><span class="ech-preset-main"><strong>CF Config</strong><code dir="ltr">AEX+DQBBXgAgACBsvLac2HVdvp+J2QTKPNjn24b5D6yHyxAcG0m+cmDcXAAEAAEAAQASY2xvdWRmbGFyZS1lY2guY29tAAA=</code></span><span class="material-symbols-outlined ech-preset-check">check_circle</span></button>
+      <button type="button" class="ech-preset-option" data-ech-preset="crypto-cloudflare" onclick="selectEchPreset('crypto-cloudflare')"><span class="ech-preset-main"><strong>CF DNS</strong><code dir="ltr">crypto.cloudflare.com+udp://8.8.8.8</code></span><span class="material-symbols-outlined ech-preset-check">check_circle</span></button>
+      <button type="button" class="ech-preset-option" data-ech-preset="ridanbe" onclick="selectEchPreset('ridanbe')"><span class="ech-preset-main"><strong>Ridanbe</strong><code dir="ltr">ridanbe.net+udp://8.8.8.8</code></span><span class="material-symbols-outlined ech-preset-check">check_circle</span></button>
+      <button type="button" class="ech-preset-option" data-ech-preset="iranva" onclick="selectEchPreset('iranva')"><span class="ech-preset-main"><strong>Iranva</strong><code dir="ltr">iranva.ir+udp://1.1.1.1</code></span><span class="material-symbols-outlined ech-preset-check">check_circle</span></button>
+    </div>
+    <div class="modal-btns"><button type="button" class="btn btn-g" onclick="closeModal('mod-ech-picker')" data-i18n="close">بستن</button></div>
+  </div>
+</div>
+
+<div class="modal" id="mod-qr"><div class="modal-c" style="max-width:360px;text-align:center">
+  <div class="modal-t"><span class="glow" data-i18n="qrCode">QR Code</span></div>
+  <div style="display:flex;justify-content:center;gap:8px;margin:10px 0">
+    <button type="button" class="btn btn-p" id="btn-qr-type-sub" onclick="setQrType('sub')">QR سابسکریپشن</button>
+    <button type="button" class="btn btn-g" id="btn-qr-type-cfg" onclick="setQrType('config')">QR کانفیگ مستقیم</button>
+  </div>
+  <img id="qr-img" src="" style="width:260px;height:260px;background:#fff;border-radius:12px;margin:12px auto;display:block" alt="QR">
+  <div class="modal-btns" style="display:flex;justify-content:center;gap:8px;flex-wrap:wrap">
+    <button type="button" class="btn btn-p" onclick="copyQrCurrentLink()">📋 کپی متن</button>
+    <button type="button" class="btn btn-g" onclick="openQrSubscription()">باز کردن ساب</button>
+    <button type="button" class="btn btn-g" onclick="closeModal('mod-qr')"><span data-i18n="close">بستن</span></button>
+  </div>
+</div></div>
+
+<div class="toast" id="toast"></div>
+
+<script src="/static/js/main.js?v=4.0.2"></script>
+</body>
+</html>

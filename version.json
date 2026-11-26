@@ -1,0 +1,6 @@
+{
+  "version": "4.1.0",
+  "name": "Lk panel",
+  "updated_at": "2026-11-13",
+  "changelog": "Rebrand to Lk panel: new default config prefix Lk-, refreshed titles, logos and login/subscription pages. Removed GitHub links and GitHub logos from every page, and pointed all Telegram links to @lowkey878."
+}
